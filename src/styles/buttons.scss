@@ -1,0 +1,236 @@
+/* ========================================
+   FILTER PANEL
+======================================== */
+.app-filter-panel {
+  width: 100%;
+  margin-bottom: 28px;
+  padding: 0;
+  /* Force the grey background on the Material card */
+  background-color: #e9ecef !important;
+  border: 1px solid #d1d5db;
+  border-radius: 6px !important;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.app-filter-panel .mat-mdc-card-content {
+  padding: 14px 22px !important;
+}
+
+/* ========================================
+   FILTER GRID & FIELDS
+======================================== */
+.app-filter-grid {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.app-filter-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+}
+
+.app-filter-field label {
+  margin: 0;
+  color: #343a40;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.app-filter-control {
+  width: 220px;
+  margin: 0;
+}
+
+/* ========================================
+   MATERIAL FORM FIELD
+======================================== */
+
+/* Set height and add white background to contrast with grey panel */
+.app-filter-control .mat-mdc-text-field-wrapper {
+  height: 40px !important;
+  background-color: #ffffff !important;
+  border-radius: 4px !important;
+}
+
+/* Fix border radius: Only round the outer left corners */
+.app-filter-control .mdc-notched-outline__leading {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* Fix border radius: Only round the outer right corners */
+.app-filter-control .mdc-notched-outline__trailing {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Align text vertically within the new 40px height */
+.app-filter-control .mat-mdc-form-field-infix {
+  min-height: 40px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+/* Remove default Material bottom margin/spacing for errors */
+.app-filter-control .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* ========================================
+   FILTER ACTIONS
+======================================== */
+.app-filter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+/* ========================================
+   BUTTON SYSTEM
+======================================== */
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px; /* Matched height with inputs */
+  min-height: 40px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 4px !important;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.app-btn mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
+}
+
+/* ========================================
+   BUTTON COLORS
+======================================== */
+.app-btn-primary {
+  background-color: #287db3 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.20);
+}
+
+.app-btn-primary:hover {
+  background-color: #216b9b !important;
+}
+
+.app-btn-filter {
+  background-color: #050505 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+.app-btn-filter:hover {
+  background-color: #242424 !important;
+}
+
+.app-btn-default {
+  background-color: #e9ecef !important;
+  border-color: #ced4da !important;
+  color: #343a40 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.app-btn-default:hover {
+  background-color: #dee2e6 !important;
+}
+
+/* ========================================
+   COLLAPSE BUTTON
+======================================== */
+.app-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px !important;
+  background: transparent;
+  color: #287db3;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.app-icon-btn mat-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+/* ========================================
+   PAGE ACTIONS (Top right area)
+======================================== */
+.app-page-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 1199px) {
+  .app-filter-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-filter-field {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .app-filter-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+/* ========================================
+   PAGE ACTION BUTTONS (Filter & Add)
+======================================== */
+.app-page-actions .app-btn {
+  font-size: 14px;
+  font-weight: 550; /* Semi-bold */
+}
+
+/* Slightly increase the icon size to match the larger text */
+.app-page-actions .app-btn mat-icon {
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+  line-height: 22px;
+}
