@@ -11,10 +11,6 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashboard/dashboard.component').then((c) => c.DashboardComponent),
-        data: {
-          breadcrumb: 'Dashboard',
-          description: 'Overview of projects, activities, and key information.',
-        },
       },
       {
         path: 'projects',
@@ -66,6 +62,43 @@ export const routes: Routes = [
           breadcrumb: 'Resources',
           description: 'Manage resources and information available to your projects.',
         },
+      },
+      {
+        path: 'admin',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'users',
+          },
+          {
+            path: 'roles',
+            loadComponent: () =>
+              import('./admin/roles/roles.component').then((c) => c.RolesComponent),
+            data: {
+              breadcrumb: 'Roles',
+              description: 'Manage system roles, assign permissions, and configure access levels.',
+            },
+          },
+          {
+            path: 'users',
+            loadComponent: () =>
+              import('./admin/users/users.component').then((c) => c.UsersComponent),
+            data: {
+              breadcrumb: 'Users',
+              description: 'Manage users, permissions, roles, and administrative access.',
+            },
+          },
+          {
+            path: 'escalation-matrix',
+            loadComponent: () =>
+              import('./admin/esc-matrix/esc-matrix.component').then((c) => c.EscMatrixComponent),
+            data: {
+              breadcrumb: 'Escalation Matrix',
+              description: 'Settings related to escalation are managed here.',
+            },
+          },
+        ],
       },
       {
         path: '',

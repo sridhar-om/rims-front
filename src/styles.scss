@@ -23,3 +23,51 @@
 @import "app/theme/styles/rtl";
 @import "styles/tables";
 @import "styles/buttons";
+
+/* Global Theme Variables */
+:root {
+  --primary-color: #015bbb;
+  --primary-hover: #0e3457;
+  --primary-tint-bg: #e6eff8;
+  --primary-tint-hover: rgba(229, 240, 252, 0.4);
+  --primary-tint-accent: rgba(18, 66, 109, 0.12);
+
+  --table-header-bg: #e5f0fc;
+  --table-header-color: #12426d;
+  --table-header-border: #d0e3f8;
+  --table-border: #e2e8f0;
+  --table-row-hover: #fafbfd;
+
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-radius: 12px;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+
+  --input-border: #cbd5e1;
+  --hover-bg: #f1f5f9;
+  --disabled-color: #cbd5e1;
+
+  --text-title: #0f172a;
+  --text-main: #1e293b;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  --badge-rejection-bg: #fee2e2;
+  --badge-rejection-color: #dc2626;
+  --badge-overdue-bg: #fef3c7;
+  --badge-overdue-color: #d97706;
+
+  --healthy-high: #059669;
+  --healthy-mid: #10b981;
+  --healthy-low: #f59e0b;
+}
+
+/* Ensure dropdown and tooltip overlays appear above modal backdrop (z-index: 1200) */
+.cdk-overlay-container {
+  z-index: 2000 !important;
+}
+
+/* Ensure Roboto font is used across form controls */
+input, textarea, select, button {
+  font-family: 'Roboto', sans-serif;
+}

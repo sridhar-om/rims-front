@@ -1,0 +1,54 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        {{ roleData ? 'Edit Role' : 'Add Role' }}
+      </h3>
+      <button type="button" class="modal-close-btn" (click)="onClose()" aria-label="Close modal">
+        <mat-icon class="close-icon">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Form Body -->
+    <form (ngSubmit)="onSave()" class="modal-form" autocomplete="off">
+      <div class="modal-body">
+        <!-- Role Name -->
+        <div class="form-group">
+          <label for="role-name-input" class="form-label">Role</label>
+          <input
+            id="role-name-input"
+            type="text"
+            name="roleName"
+            class="form-input"
+            placeholder="Enter Role Name"
+            [(ngModel)]="roleName"
+            required
+            autofocus />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="role-desc-input" class="form-label">Description</label>
+          <textarea
+            id="role-desc-input"
+            name="description"
+            class="form-textarea"
+            rows="3"
+            placeholder="Enter brief role description and scope..."
+            [(ngModel)]="description"></textarea>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="onClose()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-save">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

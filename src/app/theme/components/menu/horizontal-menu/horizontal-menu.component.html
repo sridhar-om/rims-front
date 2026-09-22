@@ -1,32 +1,44 @@
-<div [fxLayout]="(menuParentId == 0) ? 'row' : 'column'" fxLayoutAlign="start center">
+<div class="menu-level-wrapper" [fxLayout]="(menuParentId == 0) ? 'row' : 'column'" [fxLayoutAlign]="(menuParentId == 0) ? 'center center' : 'start stretch'">
     @for (menu of menuItems; track menu.id) {
-        <div class="horizontal-menu-item w-100">
-            @if (menu.routerLink && !menu.hasSubMenu) {
-                <a mat-button fxLayout="row" [fxLayoutAlign]="(settings.menuType=='default') ? 'start center' : 'center center'"
+        <div class="horizontal-menu-item">
+            @if (menu.routerLink) {
+                <a mat-button class="nav-item-btn" fxLayout="row" fxLayoutAlign="start center"
                     [routerLink]="[menu.routerLink]"
                     routerLinkActive="active-link"
-                    [routerLinkActiveOptions]="{ exact: menu.routerLink === '/' || menu.routerLink === '' }"
-                    [matTooltip]="menu.title" matTooltipPosition="above" [matTooltipDisabled]="(settings.menuType=='mini') ? 'false' : 'true'"
+                    [routerLinkActiveOptions]="{ exact: false }"
                     [id]="'horizontal-menu-item-'+menu.id">
-                    <mat-icon class="horizontal-menu-icon">{{menu.icon}}</mat-icon>
+                    @if (menu.icon) {
+                        <mat-icon class="horizontal-menu-icon">{{menu.icon}}</mat-icon>
+                    }
+                    <span class="horizontal-menu-title">{{menu.title}}</span>
+                    @if (menu.hasSubMenu) {
+                        <mat-icon iconPositionEnd class="dropdown-chevron">keyboard_arrow_down</mat-icon>
+                    }
+                </a>
+                @if (menu.hasSubMenu) {
+                    <div class="horizontal-sub-menu" [id]="'horizontal-sub-menu-'+menu.id">
+                        <app-horizontal-menu [menuParentId]="menu.id"></app-horizontal-menu>
+                    </div>
+                }
+            }
+            @else if (menu.href) {
+                <a mat-button class="nav-item-btn" fxLayout="row" fxLayoutAlign="start center"
+                    [attr.href]="menu.href" [attr.target]="menu.target || ''"
+                    [id]="'horizontal-menu-item-'+menu.id">
+                    @if (menu.icon) {
+                        <mat-icon class="horizontal-menu-icon">{{menu.icon}}</mat-icon>
+                    }
                     <span class="horizontal-menu-title">{{menu.title}}</span>
                 </a>
             }
-            @if (menu.href && !menu.subMenu) {
-                <a mat-button fxLayout="row" [fxLayoutAlign]="(settings.menuType=='default') ? 'start center' : 'center center'"
-                    [attr.href]="menu.href || ''" [attr.target]="menu.target || ''"
-                    [matTooltip]="menu.title" matTooltipPosition="above" [matTooltipDisabled]="(settings.menuType=='mini') ? 'false' : 'true'"
+            @else if (menu.hasSubMenu) {
+                <a mat-button class="nav-item-btn" fxLayout="row" fxLayoutAlign="start center"
                     [id]="'horizontal-menu-item-'+menu.id">
-                    <mat-icon class="horizontal-menu-icon">{{menu.icon}}</mat-icon>
+                    @if (menu.icon) {
+                        <mat-icon class="horizontal-menu-icon">{{menu.icon}}</mat-icon>
+                    }
                     <span class="horizontal-menu-title">{{menu.title}}</span>
-                </a>
-            }
-            @if (menu.hasSubMenu) {
-                <a mat-button fxLayout="row" [fxLayoutAlign]="(settings.menuType=='default') ? 'start center' : 'center center'"
-                    [matTooltip]="menu.title" matTooltipPosition="above" [matTooltipDisabled]="(settings.menuType=='mini') ? 'false' : 'true'"
-                    [id]="'horizontal-menu-item-'+menu.id">
-                    <mat-icon class="horizontal-menu-icon">{{menu.icon}}</mat-icon>
-                    <span class="horizontal-menu-title">{{menu.title}}</span>
+                    <mat-icon iconPositionEnd class="dropdown-chevron">keyboard_arrow_down</mat-icon>
                 </a>
                 <div class="horizontal-sub-menu" [id]="'horizontal-sub-menu-'+menu.id">
                     <app-horizontal-menu [menuParentId]="menu.id"></app-horizontal-menu>

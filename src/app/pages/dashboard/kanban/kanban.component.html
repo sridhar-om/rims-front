@@ -1,0 +1,56 @@
+<div class="kanban-board-container">
+  <div class="kanban-columns-grid">
+    @for (col of columns(); track col.id) {
+      <div
+        class="kanban-column"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop(col.name)">
+        
+        <!-- Column Header -->
+        <div class="column-header">
+          <div class="column-title-group">
+            <span class="status-dot" [style.background-color]="col.dotColor"></span>
+            <span class="column-name">{{ col.name }}</span>
+          </div>
+          <span class="column-count">{{ col.cards.length }}</span>
+        </div>
+
+        <!-- Cards List -->
+        <div class="column-cards-list">
+          @for (card of col.cards; track card.id) {
+            <div
+              class="kanban-card"
+              draggable="true"
+              (dragstart)="onDragStart(card)">
+              
+              <!-- Card Top: SUB-ID -->
+              <div class="card-id">{{ card.id }}</div>
+
+              <!-- Card Title: Product Name / Dosage -->
+              <div class="card-title">{{ card.title }}</div>
+
+              <!-- Card Subtitle: Molecule -->
+              <div class="card-molecule">{{ card.molecule }}</div>
+
+              <!-- Location & Regulatory -->
+              <div class="card-metadata">
+                <div class="meta-location">{{ card.country }} &middot; {{ card.region }}</div>
+                <div class="meta-context">{{ card.regulatoryContext }}</div>
+              </div>
+
+              <!-- Card Footer: Assignee & Date -->
+              <div class="card-footer">
+                <span class="card-assignee">{{ card.assignee }}</span>
+                <span class="card-date">{{ card.date }}</span>
+              </div>
+            </div>
+          } @empty {
+            <div class="column-empty">
+              No submissions
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

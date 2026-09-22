@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { MessagesComponent } from '../theme/components/messages/messages.component';
 import { Settings, SettingsService } from '../services/settings.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -19,23 +18,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
 import { HorizontalMenuComponent } from '../theme/components/menu/horizontal-menu/horizontal-menu.component';
-import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.component';
 import { FullScreenComponent } from '../theme/components/fullscreen/fullscreen.component';
 
 @Component({
   selector: 'app-pages',
   imports: [
     RouterOutlet,
-    FullScreenComponent,
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    MessagesComponent,
     FlexLayoutModule,
     UserMenuComponent,
     HorizontalMenuComponent,
-    BreadcrumbComponent,
   ],
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.scss',
@@ -50,7 +45,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
   readonly activatedRoute = inject(ActivatedRoute); // Injected to read route data
   readonly settingsService = inject(SettingsService);
 
-  // Generic signal that listens to the router data instead of hardcoded URLs
+  // Generic signals that listen to the router data instead of hardcoded URLs
   protected readonly isFullBleed = signal(false);
 
   constructor() {
@@ -63,7 +58,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
           currentRoute = currentRoute.firstChild;
         }
 
-        // Check if the leaf route has the 'fullBleed' flag set to true
+        // Check if the leaf route has the 'fullBleed' flag set
         this.isFullBleed.set(currentRoute.snapshot.data['fullBleed'] === true);
       });
   }

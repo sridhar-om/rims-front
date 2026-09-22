@@ -1,8 +1,286 @@
+<div class="dashboard-page">
 
+  <!-- Header: Title & Subtitle (Without Breadcrumb) -->
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">Regulatory information management</h1>
+    <p class="dashboard-subtitle">
+      Track molecules, products and submissions across every country, region and regulatory context.
+    </p>
+  </div>
 
+  <!-- Global Filters Panel -->
+  <div class="filter-panel-card">
+    <div class="filter-panel-header">
+      <div class="filter-title-group">
+        <mat-icon class="filter-header-icon">tune</mat-icon>
+        <span class="filter-header-title">Global filters</span>
+      </div>
+      <button type="button" class="btn-reset" (click)="resetFilters()">
+        <mat-icon class="reset-icon">refresh</mat-icon>
+        <span>Reset</span>
+      </button>
+    </div>
 
+    <div class="filter-grid">
+      <!-- Molecule -->
+      <div class="filter-col">
+        <label class="filter-label">MOLECULE</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterMolecule()" (ngModelChange)="filterMolecule.set($event)">
+            <option value="All molecule">All molecule</option>
+            @for (rec of allRecords(); track rec.id) {
+              <option [value]="rec.molecule">{{ rec.molecule }}</option>
+            }
+          </select>
+        </div>
+      </div>
 
-<div fxLayout="row wrap">
+      <!-- Product -->
+      <div class="filter-col">
+        <label class="filter-label">PRODUCT</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterProduct()" (ngModelChange)="filterProduct.set($event)">
+            <option value="All product">All product</option>
+            <option value="Product A">Product A</option>
+            <option value="Product B">Product B</option>
+          </select>
+        </div>
+      </div>
 
+      <!-- Country -->
+      <div class="filter-col">
+        <label class="filter-label">COUNTRY</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterCountry()" (ngModelChange)="filterCountry.set($event)">
+            <option value="All country">All country</option>
+            <option value="United States">United States</option>
+            <option value="Germany">Germany</option>
+            <option value="India">India</option>
+            <option value="Japan">Japan</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Region -->
+      <div class="filter-col">
+        <label class="filter-label">REGION</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterRegion()" (ngModelChange)="filterRegion.set($event)">
+            <option value="All region">All region</option>
+            <option value="North America">North America</option>
+            <option value="Europe">Europe</option>
+            <option value="Asia Pacific">Asia Pacific</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Regulatory Context -->
+      <div class="filter-col">
+        <label class="filter-label">REGULATORY CONTEXT</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterRegulatoryContext()" (ngModelChange)="filterRegulatoryContext.set($event)">
+            <option value="All regulatory context">All regulatory context</option>
+            <option value="FDA">FDA</option>
+            <option value="EMA">EMA</option>
+            <option value="PMDA">PMDA</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Nav Tabs / Pills -->
+  <div class="nav-tabs-bar">
+    <div class="tabs-scroll">
+      @for (tab of tabs; track tab.label) {
+        <button
+          type="button"
+          class="nav-tab-btn"
+          [class.active]="activeTab() === tab.label"
+          (click)="setTab(tab.label)">
+          <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
+          <span class="tab-label">{{ tab.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Views Content -->
+  @if (activeTab() === 'Portfolio') {
+    <!-- KPI Metric Summary Cards (4 Cards) -->
+    <div class="kpi-cards-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Molecules in portfolio</span>
+      <span class="kpi-value">{{ metricMolecules() }}</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Products</span>
+      <span class="kpi-value">{{ metricProducts() }}</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total submissions</span>
+      <span class="kpi-value">{{ metricTotalSubmissions() }}</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Overdue activity</span>
+      <span class="kpi-value">{{ metricOverdueActivity() }}</span>
+    </div>
+  </div>
+
+  <!-- Main Grid Card (Same Grid Styles) -->
+  <div class="grid-card">
+    <div class="table-responsive-wrapper">
+      <table class="grid-table">
+        <thead>
+          <tr class="table-header-row">
+            <th class="th-molecule text-left">Molecule</th>
+            <th class="th-num text-center">Submitted Countries</th>
+            <th class="th-num text-center">Not Submitted Countries</th>
+            <th class="th-num text-center">Products</th>
+            <th class="th-num text-center">Variants (SKU)</th>
+            <th class="th-num text-center">Submissions</th>
+            <th class="th-num text-center">Rejections</th>
+            <th class="th-num text-center">Overdue Activity</th>
+            <th class="th-num text-center">Blackout</th>
+            <th class="th-healthy text-center">Healthy</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (item of paginatedRecords(); track item.id) {
+            <tr class="grid-row">
+              <!-- Molecule Name -->
+              <td class="td-molecule text-left">
+                <span class="molecule-name">{{ item.molecule }}</span>
+              </td>
+
+              <!-- Submitted Countries -->
+              <td class="td-num text-center">{{ item.submittedCountries }}</td>
+
+              <!-- Not Submitted Countries -->
+              <td class="td-num text-center">{{ item.notSubmittedCountries }}</td>
+
+              <!-- Products -->
+              <td class="td-num text-center">{{ item.products }}</td>
+
+              <!-- Variants (SKU) -->
+              <td class="td-num text-center">{{ item.variantsSku }}</td>
+
+              <!-- Submissions -->
+              <td class="td-num text-center">{{ item.submissions }}</td>
+
+              <!-- Rejections -->
+              <td class="td-num text-center">
+                @if (item.rejections > 0) {
+                  <span class="badge-rejection">{{ item.rejections }}</span>
+                } @else {
+                  <span class="badge-neutral">{{ item.rejections }}</span>
+                }
+              </td>
+
+              <!-- Overdue Activity -->
+              <td class="td-num text-center">
+                @if (item.overdueActivity > 0) {
+                  <span class="badge-overdue">{{ item.overdueActivity }}</span>
+                } @else {
+                  <span class="badge-neutral">{{ item.overdueActivity }}</span>
+                }
+              </td>
+
+              <!-- Blackout -->
+              <td class="td-num text-center blackout-text">{{ item.blackout }}</td>
+
+              <!-- Healthy Progress Bar -->
+              <td class="td-healthy">
+                <div class="healthy-wrapper">
+                  <div class="healthy-bar-track">
+                    <div
+                      class="healthy-bar-fill"
+                      [style.width.%]="item.healthy"
+                      [class.high]="item.healthy >= 85"
+                      [class.mid]="item.healthy >= 70 && item.healthy < 85"
+                      [class.low]="item.healthy < 70">
+                    </div>
+                  </div>
+                  <span class="healthy-percent-text">{{ item.healthy }}%</span>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="10" class="text-center py-4 text-muted">No molecules found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Pagination Bar (Matching Image 3) -->
+    <div class="table-pagination-bar">
+      <div class="pagination-right">
+        <!-- Items per page selector -->
+        <div class="items-per-page">
+          <span>Items per page:</span>
+          <div class="select-per-page-wrapper">
+            <select
+              class="select-per-page"
+              [ngModel]="pageSize()"
+              (ngModelChange)="onPageSizeChange($event)">
+              <option [value]="5">5</option>
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Count Display -->
+        <div class="pagination-count">
+          <span>{{ startItemIndex() }} - {{ endItemIndex() }} of {{ filteredRecords().length }}</span>
+        </div>
+
+        <!-- Navigation Buttons (< and >) -->
+        <div class="pagination-nav-buttons">
+          <button
+            type="button"
+            class="nav-page-btn"
+            [disabled]="currentPage() === 1"
+            (click)="previousPage()"
+            aria-label="Previous page">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button
+            type="button"
+            class="nav-page-btn"
+            [disabled]="currentPage() >= totalPages()"
+            (click)="nextPage()"
+            aria-label="Next page">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  } @else if (activeTab() === 'Kanban') {
+    <app-kanban
+      [filterMolecule]="filterMolecule()"
+      [filterProduct]="filterProduct()"
+      [filterCountry]="filterCountry()"
+      [filterRegion]="filterRegion()"
+      [filterRegulatoryContext]="filterRegulatoryContext()">
+    </app-kanban>
+  } @else {
+    <div class="grid-card tab-placeholder-card">
+      <div class="placeholder-content">
+        <mat-icon class="placeholder-icon">insights</mat-icon>
+        <h3 class="placeholder-title">{{ activeTab() }} View</h3>
+        <p class="placeholder-text">This view is currently being integrated into the regulatory information management suite.</p>
+        <button type="button" class="nav-tab-btn active" (click)="setTab('Portfolio')">
+          <mat-icon class="tab-icon">arrow_back</mat-icon>
+          <span>Return to Portfolio</span>
+        </button>
+      </div>
+    </div>
+  }
 
 </div>

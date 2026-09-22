@@ -132,13 +132,13 @@
    BUTTON COLORS
 ======================================== */
 .app-btn-primary {
-  background-color: #287db3 !important;
+  background-color: var(--primary-color, #12426d) !important;
   color: #ffffff !important;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.20);
 }
 
 .app-btn-primary:hover {
-  background-color: #216b9b !important;
+  background-color: var(--primary-hover, #0e3457) !important;
 }
 
 .app-btn-filter {
@@ -175,7 +175,7 @@
   border: 0;
   border-radius: 4px !important;
   background: transparent;
-  color: #287db3;
+  color: var(--primary-color, #12426d);
   cursor: pointer;
   flex-shrink: 0;
 }

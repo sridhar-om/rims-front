@@ -1,0 +1,194 @@
+<div class="roles-page">
+
+  <!-- Top Action Buttons (Aligned with page header) -->
+  <div class="header-action-wrapper">
+    <div class="action-buttons-group">
+      <button
+        type="button"
+        class="btn-filter"
+        (click)="toggleFilter()"
+        [class.active]="filterToggle() || filterKeyword() || filterRole() !== 'All'"
+        id="btn-filter">
+        <mat-icon class="filter-icon">tune</mat-icon>
+        <span class="btn-text">Filter</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary-action btn-add-primary"
+        (click)="openAddRole()"
+        id="btn-add-role">
+        <span class="plus-sign">+</span>
+        <span class="btn-text">Add Role</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Collapsible Filter Panel (White background) -->
+  @if (filterToggle()) {
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-inputs">
+          <!-- Keyword -->
+          <div class="filter-item">
+            <label class="filter-label">Keyword:</label>
+            <input
+              type="text"
+              class="form-control-filter"
+              placeholder="Search by Name, Email, Role"
+              [ngModel]="filterKeyword()"
+              (ngModelChange)="filterKeyword.set($event)"
+            />
+          </div>
+
+          <!-- Role -->
+          <div class="filter-item">
+            <label class="filter-label">Role:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterRole()"
+                (ngModelChange)="filterRole.set($event)">
+                <option value="All">Select Role</option>
+                @for (r of rolesList(); track r) {
+                  <option [value]="r">{{ r }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clear Button -->
+        <div class="filter-actions">
+          <button type="button" class="btn-clear" (click)="clearFilter()">
+            <mat-icon class="btn-action-icon">settings_backup_restore</mat-icon>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Main Roles Card -->
+  <div class="roles-card">
+    <div class="table-responsive-wrapper">
+      <table class="roles-table">
+        <!-- Table Header (Primary color #e5f0fc / #12426d) -->
+        <thead>
+          <tr class="table-header-row">
+            <th class="col-actions">ACTIONS</th>
+            <th class="th-role">ROLE</th>
+            <th class="th-users text-center">USERS</th>
+            <th class="th-permissions text-center">SCREEN PERMISSIONS</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (role of filteredRoles(); track role.id) {
+            <tr class="role-row">
+              <!-- Actions: Edit & Delete -->
+              <td class="col-actions">
+                <div class="actions-cell-wrapper">
+                  <button
+                    type="button"
+                    class="action-edit-btn"
+                    matTooltip="Edit Role"
+                    (click)="openEditRole(role)">
+                    <mat-icon class="edit-icon">edit</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    class="action-delete-btn"
+                    matTooltip="Delete Role"
+                    (click)="confirmDelete(role)">
+                    <mat-icon class="delete-icon">delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+
+              <!-- Role Name -->
+              <td class="td-role">
+                <span class="role-name-text">{{ role.roleName }}</span>
+              </td>
+
+              <!-- Users (Blue Link e.g. 11/59) -->
+              <td class="td-users text-center">
+                <a
+                  class="blue-link"
+                  routerLink="/admin/users"
+                  matTooltip="View assigned users">
+                  {{ role.usersCount }}/{{ role.totalUsers }}
+                </a>
+              </td>
+
+              <!-- Screen Permissions (Centered) -->
+              <td class="td-permissions text-center">
+                <span class="blue-link cursor-pointer" matTooltip="View screen permissions">
+                  {{ role.permissionCount }}/{{ role.totalPermissionCount }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center py-4 text-muted">No roles found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Pagination Bar -->
+    <div class="table-pagination-bar">
+      <div class="pagination-left"></div>
+      <div class="pagination-right">
+        <div class="items-per-page">
+          <span>Items per page:</span>
+          <select class="select-per-page" [ngModel]="pageSize()" (ngModelChange)="pageSize.set($event)">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+        </div>
+
+        <div class="pagination-count">
+          <span>1 - {{ filteredRoles().length }} of {{ filteredRoles().length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Role Modal Popup -->
+  @if (showRoleModal()) {
+    <app-role-pop
+      [roleData]="selectedRoleForEdit()"
+      (save)="onSaveRole($event)"
+      (close)="closeRoleModal()">
+    </app-role-pop>
+  }
+
+  <!-- Delete Confirmation Modal -->
+  @if (showDeleteConfirmModal() && deleteTargetRole()) {
+    <div class="modal-backdrop" (click)="closeDeleteModal()">
+      <div class="delete-dialog" (click)="$event.stopPropagation()">
+        <div class="delete-header">
+          <h3 class="delete-title">Delete Role</h3>
+          <button type="button" class="btn-close-x" (click)="closeDeleteModal()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="delete-body">
+          <p>
+            Are you sure you want to delete role
+            <strong>"{{ deleteTargetRole()?.roleName }}"</strong>?
+          </p>
+          <p class="delete-subtext">Users assigned to this role will lose their associated privileges.</p>
+        </div>
+        <div class="delete-footer">
+          <button type="button" class="btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+          <button type="button" class="btn-confirm-delete" (click)="executeDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

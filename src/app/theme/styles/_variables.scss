@@ -1,7 +1,49 @@
 $font-family: 'Roboto', sans-serif;
 
-$toolbar-height: 56px; 
-$horizontal-menu-height: $toolbar-height;
+// Primary Theme Colors
+$primary-color: #015bbb;
+$primary-hover: #0e3457;
+$primary-tint-bg: #e6eff8;
+$primary-tint-hover: rgba(229, 240, 252, 0.4);
+$primary-tint-accent: rgba(18, 66, 109, 0.12);
+
+// Table System Colors
+$table-header-bg: #e5f0fc;
+$table-header-color: #12426d;
+$table-header-border: #d0e3f8;
+$table-border: #e2e8f0;
+$table-row-hover: #fafbfd;
+
+// Card & Container System
+$card-bg: #ffffff;
+$card-border: #e2e8f0;
+$card-radius: 12px;
+$card-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+
+// Form Controls & Interactive
+$input-border: #cbd5e1;
+$hover-bg: #f1f5f9;
+$disabled-color: #cbd5e1;
+
+// Text Colors
+$text-title: #0f172a;
+$text-main: #1e293b;
+$text-secondary: #334155;
+$text-muted: #64748b;
+
+// Status & Badge Colors
+$badge-rejection-bg: #fee2e2;
+$badge-rejection-color: #dc2626;
+$badge-overdue-bg: #fef3c7;
+$badge-overdue-color: #d97706;
+
+// Health Indicator Colors
+$healthy-high: #059669;
+$healthy-mid: #10b981;
+$healthy-low: #f59e0b;
+
+$toolbar-height: 64px; 
+$horizontal-menu-height: 42px;
 
 $sidenav-width: 250px;
 $sidenav-user-block-height: 170px;
@@ -15,4 +57,4 @@ $box-height: 236px;
 $box-position: 34px;
 $register-box-height: 386px;
 
-$footer-height: 56px; 
+$footer-height: 56px;
