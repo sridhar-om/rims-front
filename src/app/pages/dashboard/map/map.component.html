@@ -1,0 +1,272 @@
+<div class="map-page-container">
+
+  <!-- Top: 4 Metric Cards -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <span class="metric-label">Submissions</span>
+      <div class="metric-value">{{ metricSubmissions() }}</div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Filings</span>
+      <div class="metric-value">{{ metricFilings() }}</div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Approvals</span>
+      <div class="metric-value">{{ metricApprovals() }}</div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Declined</span>
+      <div class="metric-value">{{ metricDeclined() }}</div>
+    </div>
+  </div>
+
+  <!-- Map Card -->
+  <div class="map-card">
+    <div class="map-card-header">
+      <!-- Status Legend -->
+      <div class="map-legend">
+        @for (item of legendStatuses; track item.label) {
+          <div
+            class="legend-item"
+            [class.active]="selectedStatus() === item.label"
+            (click)="toggleStatusFilter(item.label)"
+            role="button"
+            tabindex="0">
+            <span class="legend-dot" [style.background-color]="item.color"></span>
+            <span class="legend-text">{{ item.label }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Clear filter button if any filter is active -->
+      @if (selectedCountry() || selectedStatus()) {
+        <button type="button" class="btn-clear-filter" (click)="clearMapFilters()">
+          <mat-icon class="clear-icon">close</mat-icon>
+          <span>Reset filter: {{ selectedCountry() || selectedStatus() }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Vector World Map Container -->
+    <div class="world-map-wrapper">
+      <svg viewBox="0 0 1000 500" class="world-map-svg" preserveAspectRatio="xMidYMid meet">
+        <!-- SVG Filter for Marker Glow -->
+        <defs>
+          <filter id="marker-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.3" />
+          </filter>
+        </defs>
+
+        <!-- World Continents Background Shapes -->
+        <g class="continents-layer">
+          <!-- North America & Greenland -->
+          <!-- Greenland -->
+          <path class="continent-path" d="M 330 35 L 360 40 L 375 75 L 365 105 L 340 108 L 325 80 L 320 50 Z" />
+          <!-- Canada, Alaska & Northern Islands -->
+          <path class="continent-path" d="M 120 70 L 150 50 L 195 55 L 230 45 L 275 60 L 295 85 L 290 115 L 270 120 L 255 100 L 225 110 L 190 95 L 155 110 L 120 95 Z" />
+          <path class="continent-path" d="M 85 85 L 115 80 L 125 105 L 95 110 Z" />
+          <!-- USA & Mexico & Central America -->
+          <path class="continent-path" d="M 140 115 L 190 105 L 255 110 L 270 120 L 275 145 L 290 155 L 280 180 L 265 185 L 250 175 L 235 200 L 215 225 L 205 210 L 195 180 L 160 170 L 140 145 Z" />
+          <path class="continent-path" d="M 215 225 L 235 240 L 245 260 L 240 268 L 225 255 L 210 235 Z" />
+
+          <!-- South America -->
+          <path class="continent-path" d="M 275 260 L 320 250 L 365 270 L 390 300 L 380 335 L 350 380 L 325 435 L 310 440 L 310 395 L 300 350 L 280 305 L 265 280 Z" />
+
+          <!-- Europe -->
+          <!-- Scandinavia -->
+          <path class="continent-path" d="M 495 50 L 530 45 L 545 75 L 530 115 L 510 110 L 505 85 L 485 70 Z" />
+          <!-- Great Britain & Ireland -->
+          <path class="continent-path" d="M 462 105 L 480 102 L 476 130 L 460 135 Z" />
+          <path class="continent-path" d="M 445 115 L 455 112 L 452 130 L 442 125 Z" />
+          <!-- Western & Central & Southern Europe -->
+          <path class="continent-path" d="M 465 140 L 490 135 L 525 130 L 555 135 L 565 155 L 545 170 L 515 175 L 495 185 L 465 195 L 455 175 L 460 150 Z" />
+          <!-- Italy -->
+          <path class="continent-path" d="M 505 168 L 520 172 L 530 195 L 515 200 L 508 180 Z" />
+
+          <!-- Africa -->
+          <path class="continent-path" d="M 455 198 L 515 185 L 555 180 L 585 200 L 610 240 L 585 280 L 575 330 L 550 385 L 520 390 L 505 340 L 475 285 L 450 255 L 440 220 Z" />
+          <!-- Madagascar -->
+          <path class="continent-path" d="M 598 320 L 612 325 L 604 365 L 592 360 Z" />
+
+          <!-- Asia & Middle East -->
+          <!-- Arabian Peninsula -->
+          <path class="continent-path" d="M 570 205 L 615 200 L 635 235 L 610 260 L 575 240 Z" />
+          <!-- Russia, Central Asia & China -->
+          <path class="continent-path" d="M 555 125 L 615 110 L 685 95 L 755 85 L 835 80 L 890 85 L 895 115 L 850 135 L 805 135 L 790 165 L 805 190 L 780 215 L 740 215 L 710 195 L 655 190 L 610 170 L 575 165 L 550 145 Z" />
+          <!-- Indian Subcontinent -->
+          <path class="continent-path" d="M 655 190 L 710 195 L 720 235 L 705 270 L 685 280 L 670 245 L 655 220 Z" />
+          <!-- Southeast Asia -->
+          <path class="continent-path" d="M 740 215 L 775 220 L 785 255 L 770 270 L 755 245 Z" />
+          <!-- Japan -->
+          <path class="continent-path" d="M 835 150 L 850 155 L 840 185 L 825 180 Z" />
+          <!-- Philippines & Indonesian Archipelagos -->
+          <path class="continent-path" d="M 788 245 L 800 248 L 795 270 L 785 265 Z" />
+          <path class="continent-path" d="M 735 285 L 765 285 L 755 295 L 730 295 Z" />
+          <path class="continent-path" d="M 770 285 L 815 285 L 805 300 L 765 300 Z" />
+          <path class="continent-path" d="M 825 285 L 865 290 L 855 310 L 820 305 Z" />
+
+          <!-- Australia & Oceania -->
+          <path class="continent-path" d="M 775 325 L 835 320 L 865 345 L 855 390 L 820 405 L 770 385 L 760 350 Z" />
+          <!-- New Zealand -->
+          <path class="continent-path" d="M 885 395 L 895 400 L 890 425 L 880 420 Z" />
+        </g>
+
+        <!-- Interactive Country Markers Layer -->
+        <g class="markers-layer">
+          @for (marker of countryMarkers; track marker.name) {
+            <g
+              class="country-marker-group"
+              [class.selected]="selectedCountry() === marker.name"
+              [attr.transform]="'translate(' + marker.x + ',' + marker.y + ')'"
+              (click)="selectCountry(marker.name)"
+              [matTooltip]="marker.name + ' (' + marker.status + ' · ' + marker.submissionsCount + ' records)'"
+              matTooltipPosition="above">
+
+              <!-- Ripple/Pulse Ring for Active Status -->
+              <circle
+                class="marker-pulse"
+                cx="0"
+                cy="0"
+                r="9"
+                [attr.stroke]="marker.color" />
+
+              <!-- Outer White Ring -->
+              <circle
+                cx="0"
+                cy="0"
+                r="5.5"
+                fill="#ffffff"
+                filter="url(#marker-glow)" />
+
+              <!-- Core Status Dot -->
+              <circle
+                class="marker-core"
+                cx="0"
+                cy="0"
+                r="3.8"
+                [attr.fill]="selectedCountry() === marker.name ? '#1e293b' : marker.color" />
+
+              <!-- Selection Ring (Shown when active) -->
+              @if (selectedCountry() === marker.name) {
+                <circle
+                  cx="0"
+                  cy="0"
+                  r="8"
+                  fill="none"
+                  stroke="#1e293b"
+                  stroke-width="1.8"
+                  stroke-dasharray="2 2" />
+              }
+            </g>
+          }
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Middle: 2 Side-by-Side Cards (Activities vs No Activities) -->
+  <div class="activities-row-layout">
+
+    <!-- Left Card: Countries with Activities -->
+    <div class="activities-card">
+      <div class="activities-header">
+        <h3 class="activities-title">Countries with activities</h3>
+      </div>
+      <div class="countries-tags-grid">
+        @for (item of countriesWithActivities(); track item.name) {
+          <button
+            type="button"
+            class="country-tag-btn"
+            [class.active]="selectedCountry() === item.name"
+            (click)="selectCountry(item.name)">
+            <span class="country-tag-dot" [style.background-color]="item.color"></span>
+            <span class="country-tag-name">{{ item.name }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Right Card: Countries without Activities -->
+    <div class="activities-card">
+      <div class="activities-header">
+        <h3 class="activities-title">Countries without activities</h3>
+      </div>
+      <div class="countries-tags-grid">
+        @for (item of countriesWithoutActivities(); track item.name) {
+          <button
+            type="button"
+            class="country-tag-btn inactive-btn"
+            [class.active]="selectedCountry() === item.name"
+            (click)="selectCountry(item.name)">
+            <span class="country-tag-dot inactive-dot"></span>
+            <span class="country-tag-name">{{ item.name }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom: All Submissions and Filings Records Table Card -->
+  <div class="records-card">
+    <div class="records-card-header">
+      <!-- <div class="records-title-group">
+        <span class="records-title">All submissions and filings</span>
+        <span class="records-count">&middot; {{ filteredRecords().length }} records</span>
+      </div> -->
+
+      <!-- @if (selectedCountry() || selectedStatus()) {
+        <button type="button" class="btn-reset-table-filter" (click)="clearMapFilters()">
+          Clear filter
+        </button>
+      } -->
+    </div>
+
+    <!-- Responsive Horizontal Scroll Container -->
+    <div class="table-responsive-wrapper">
+      <table class="submissions-table">
+        <thead>
+          <tr>
+            <th class="th-record-id">Record ID</th>
+            <th>Molecule</th>
+            <th>Product</th>
+            <th>Country</th>
+            <th>Region</th>
+            <th>Regulatory Context</th>
+            <th>Stage</th>
+            <th>Status</th>
+            <th>Submitted On</th>
+            <th>Decision On</th>
+            <th>Value (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of filteredRecords(); track row.recordId) {
+            <tr [class.highlighted-row]="selectedCountry() === row.country">
+              <td class="td-record-id">{{ row.recordId }}</td>
+              <td class="td-molecule">{{ row.molecule }}</td>
+              <td class="td-product">{{ row.product }}</td>
+              <td class="td-country">{{ row.country }}</td>
+              <td class="td-region">{{ row.region }}</td>
+              <td class="td-regulatory">{{ row.regulatoryContext }}</td>
+              <td class="td-stage">{{ row.stage }}</td>
+              <td class="td-status">
+                <span class="badge-status" [ngClass]="row.status.toLowerCase()">
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="td-date">{{ row.submittedOn }}</td>
+              <td class="td-decision">{{ row.decisionOn }}</td>
+              <td class="td-value">{{ row.valueUsd }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="11" class="text-center py-4 text-muted">No records match the selected criteria.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -33,27 +33,50 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: var(--primary-color, $primary-color);
+    padding: 8px 12px;
+    border-radius: 8px;
     margin-bottom: 14px;
-    padding: 0 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
-    .column-title-group {
-      display: flex;
+    .column-status-badge {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
 
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-        flex-shrink: 0;
+      &.status-logged {
+        background: rgba(255, 255, 255, 0.22);
+        color: #ffffff;
       }
 
-      .column-name {
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--text-title, $text-title);
-        letter-spacing: -0.2px;
+      &.status-submitted {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      &.status-filed {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+
+      &.status-approved {
+        background: #dcfce7;
+        color: #15803d;
+      }
+
+      &.status-not_approved {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+
+      &.status-hold {
+        background: #f3e8ff;
+        color: #6b21a8;
       }
     }
 
@@ -61,15 +84,16 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 16px;
-      height: 20px;
-      padding: 0 8px;
-      border-radius: 10px;
-      background: var(--card-bg, $card-bg);
-      border: 1px solid var(--card-border, $card-border);
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--text-muted, $text-muted);
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 6px;
+      background: #ffffff;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-title, $text-title);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
     }
   }
 

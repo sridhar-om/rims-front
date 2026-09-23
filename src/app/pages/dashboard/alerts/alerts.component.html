@@ -1,0 +1,73 @@
+<div class="alerts-page-container">
+
+  <!-- Summary KPI Cards (4 Cards) -->
+  <div class="alerts-summary-grid">
+    <div class="summary-card">
+      <span class="card-label">Submission</span>
+      <span class="card-value">{{ submissionCount() }}</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-label">Filing</span>
+      <span class="card-value">{{ filingCount() }}</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-label">Approved</span>
+      <span class="card-value">{{ approvedCount() }}</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-label">Declined</span>
+      <span class="card-value">{{ declinedCount() }}</span>
+    </div>
+  </div>
+
+  <!-- Main Alerts Grid Card -->
+  <div class="alerts-table-card">
+    <div class="table-responsive-wrapper">
+      <table class="alerts-table">
+        <thead>
+          <tr>
+            <th class="th-alert-id">Alert ID</th>
+            <th>Category</th>
+            <th>Severity</th>
+            <th class="th-message">Message</th>
+            <th>Molecule</th>
+            <th>Product</th>
+            <th>Country</th>
+            <th>Regulatory Context</th>
+            <th>Raised On</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (alert of filteredAlerts(); track alert.id) {
+            <tr>
+              <td class="td-alert-id">{{ alert.id }}</td>
+              <td>{{ alert.category }}</td>
+              <td>
+                <span class="badge-severity" [ngClass]="alert.severity.toLowerCase()">
+                  {{ alert.severity }}
+                </span>
+              </td>
+              <td class="td-message">{{ alert.message }}</td>
+              <td>{{ alert.molecule }}</td>
+              <td>{{ alert.product }}</td>
+              <td>{{ alert.country }}</td>
+              <td>{{ alert.regulatoryContext }}</td>
+              <td>{{ alert.raisedOn }}</td>
+              <td>
+                <span class="status-text" [ngClass]="alert.status.toLowerCase().replace(' ', '-')">
+                  {{ alert.status }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="10" class="text-center py-4 text-muted">No alerts found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,9 +1,93 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, input, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { DashboardComponent } from '../dashboard.component';
+import { INITIAL_MOLECULE_RECORDS, MoleculeRecord } from '../models/dashboard.model';
 
 @Component({
   selector: 'app-portfolio',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './portfolio.component.html',
   styleUrl: './portfolio.component.scss',
 })
-export class PortfolioComponent {}
+export class PortfolioComponent {
+  private readonly dashboard = inject(DashboardComponent, { optional: true });
+
+  // Optional inputs for standalone usage
+  readonly filterMolecule = input<string>('All molecule');
+  readonly filterProduct = input<string>('All product');
+  readonly filterCountry = input<string>('All country');
+  readonly filterRegion = input<string>('All region');
+  readonly filterRegulatoryContext = input<string>('All regulatory context');
+
+  // Pagination State (Default 10 rows)
+  readonly pageSize = signal<number>(10);
+  readonly currentPage = signal<number>(1);
+
+  // 15 Molecule Records
+  readonly allRecords = signal<MoleculeRecord[]>(INITIAL_MOLECULE_RECORDS);
+
+  // Filtered List
+  readonly filteredRecords = computed(() => {
+    let list = this.allRecords();
+    const mol = this.dashboard ? this.dashboard.filterMolecule() : this.filterMolecule();
+
+    if (mol && mol !== 'All molecule') {
+      list = list.filter((r) => r.molecule === mol);
+    }
+    return list;
+  });
+
+  // Summary Metrics
+  readonly metricMolecules = computed(() => this.filteredRecords().length);
+  readonly metricProducts = signal<number>(14);
+  readonly metricTotalSubmissions = signal<number>(257);
+  readonly metricOverdueActivity = signal<number>(16);
+
+  // Pagination Computations
+  readonly totalPages = computed(() => {
+    const count = this.filteredRecords().length;
+    const size = this.pageSize();
+    return Math.max(1, Math.ceil(count / size));
+  });
+
+  readonly paginatedRecords = computed(() => {
+    const list = this.filteredRecords();
+    const size = this.pageSize();
+    const page = Math.min(this.currentPage(), this.totalPages());
+    const start = (page - 1) * size;
+    return list.slice(start, start + size);
+  });
+
+  readonly startItemIndex = computed(() => {
+    const total = this.filteredRecords().length;
+    if (total === 0) return 0;
+    const page = Math.min(this.currentPage(), this.totalPages());
+    return (page - 1) * this.pageSize() + 1;
+  });
+
+  readonly endItemIndex = computed(() => {
+    const total = this.filteredRecords().length;
+    const page = Math.min(this.currentPage(), this.totalPages());
+    return Math.min(page * this.pageSize(), total);
+  });
+
+  onPageSizeChange(newSize: number): void {
+    this.pageSize.set(Number(newSize));
+    this.currentPage.set(1);
+  }
+
+  previousPage(): void {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+  }
+}

@@ -8,10 +8,7 @@
         
         <!-- Column Header -->
         <div class="column-header">
-          <div class="column-title-group">
-            <span class="status-dot" [style.background-color]="col.dotColor"></span>
-            <span class="column-name">{{ col.name }}</span>
-          </div>
+          <span class="column-status-badge" [ngClass]="'status-' + col.id">{{ col.name }}</span>
           <span class="column-count">{{ col.cards.length }}</span>
         </div>
 

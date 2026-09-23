@@ -2,7 +2,7 @@ import { Menu } from '../models/menu.model';
 
 export const applicationMenuItems: Menu[] = [
   new Menu(1, 'Dashboard', '/dashboard', null, 'grid_view', null, false, 0),
-  new Menu(10, 'Dossiers', '/projects', null, 'business_center', null, false, 0),
+  new Menu(10, 'Dossiers', '/dossiers', null, 'business_center', null, false, 0),
   new Menu(20, 'Orders', '/stages', null, 'layers', null, false, 0),
   new Menu(30, 'Reports', '/gates', null, 'door_front', null, false, 0),
   new Menu(40, 'Activity', '/activity', null, 'groups', null, false, 0),

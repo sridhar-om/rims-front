@@ -1,0 +1,135 @@
+<div class="tree-page-layout">
+
+  <!-- Left: Tree Navigation Sidebar Card -->
+  <div class="tree-sidebar-card">
+    <div class="tree-card-header">
+      <h2 class="tree-header-title">Country &middot; Molecule &middot; Product</h2>
+    </div>
+
+    <div class="tree-scroll-container">
+      <div class="tree-nodes-list">
+        @for (country of treeData(); track country.id) {
+          <div class="tree-country-group" [class.expanded]="country.expanded">
+            <!-- Country Node -->
+            <div
+              class="tree-node country-node"
+              (click)="toggleCountry(country, $event)">
+              <div class="node-left">
+                <mat-icon class="node-chevron">
+                  {{ country.expanded ? 'expand_more' : 'chevron_right' }}
+                </mat-icon>
+                <mat-icon class="node-icon country-icon">public</mat-icon>
+                <span class="node-name country-name">{{ country.name }}</span>
+              </div>
+              <span class="node-meta-region">{{ country.region }}</span>
+            </div>
+
+            <!-- Molecules Children (if expanded) -->
+            @if (country.expanded) {
+              <div class="tree-molecules-list">
+                @for (molecule of country.molecules; track molecule.id) {
+                  <div class="tree-molecule-group" [class.expanded]="molecule.expanded">
+                    <!-- Molecule Node -->
+                    <div
+                      class="tree-node molecule-node"
+                      (click)="toggleMolecule(molecule, $event)">
+                      <div class="node-left">
+                        <mat-icon class="node-chevron">
+                          {{ molecule.expanded ? 'expand_more' : 'chevron_right' }}
+                        </mat-icon>
+                        <mat-icon class="node-icon molecule-icon">science</mat-icon>
+                        <span class="node-name molecule-name">{{ molecule.name }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Products Children (if molecule expanded) -->
+                    @if (molecule.expanded) {
+                      <div class="tree-products-list">
+                        @for (product of molecule.products; track product.id) {
+                          <div
+                            class="tree-node product-node"
+                            [class.active]="selectedContext()?.product?.id === product.id"
+                            (click)="selectProduct(product, molecule, country)">
+                            <div class="node-left">
+                              <mat-icon class="node-icon product-icon">deployed_code</mat-icon>
+                              <span class="node-name product-name">{{ product.name }}</span>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Content Display Card -->
+  <div class="tree-content-card">
+    @if (!selectedContext()) {
+      <!-- Empty State (Matching Screenshot) -->
+      <div class="empty-state-container">
+        <div class="empty-icon-circle">
+          <mat-icon class="empty-box-icon">deployed_code</mat-icon>
+        </div>
+        <h3 class="empty-title">Select a product</h3>
+        <p class="empty-subtitle">
+          Expand a country and a molecule in the tree, then choose a product to see its submission grid.
+        </p>
+      </div>
+    } @else {
+      <!-- Selected Product Submission Grid View (Matching Screenshot 1) -->
+      <div class="product-details-view">
+        <div class="product-grid-header">
+          <span class="product-title">{{ selectedContext()?.product?.name }} &middot; {{ selectedContext()?.country?.name }}</span>
+          <span class="records-count">{{ productRecords().length }} records</span>
+        </div>
+
+        <!-- Submission Grid Table with Matching 11 Columns -->
+        <div class="table-responsive-wrapper">
+          <table class="grid-table">
+            <thead>
+              <tr class="table-header-row">
+                <th class="th-record-id">Record ID</th>
+                <th>Molecule</th>
+                <th>Product</th>
+                <th>Country</th>
+                <th>Region</th>
+                <th>Regulatory Context</th>
+                <th>Stage</th>
+                <th>Status</th>
+                <th>Submitted On</th>
+                <th>Decision On</th>
+                <th>Value (USD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of productRecords(); track row.recordId) {
+                <tr class="grid-row">
+                  <td class="td-record-id">{{ row.recordId }}</td>
+                  <td>{{ row.molecule }}</td>
+                  <td>{{ row.product }}</td>
+                  <td>{{ row.country }}</td>
+                  <td>{{ row.region }}</td>
+                  <td>{{ row.regulatoryContext }}</td>
+                  <td>{{ row.stage }}</td>
+                  <td>
+                    <span class="badge-status" [ngClass]="row.status.toLowerCase()">{{ row.status }}</span>
+                  </td>
+                  <td>{{ row.submittedOn }}</td>
+                  <td>{{ row.decisionOn }}</td>
+                  <td>{{ row.valueUsd }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>

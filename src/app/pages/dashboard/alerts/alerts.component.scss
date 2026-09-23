@@ -1,0 +1,196 @@
+@import "../../../theme/styles/variables";
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.alerts-page-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Summary 4 KPI Cards */
+.alerts-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card {
+    background: var(--card-bg, $card-bg);
+    border: 1px solid var(--card-border, $card-border);
+    border-radius: var(--card-radius, $card-radius);
+    padding: 18px 22px;
+    box-shadow: var(--card-shadow, $card-shadow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .card-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted, $text-muted);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .card-value {
+      display: block;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-title, $text-title);
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+  }
+}
+
+/* Main Alerts Table Card */
+.alerts-table-card {
+  background: var(--card-bg, $card-bg);
+  border: 1px solid var(--card-border, $card-border);
+  border-radius: var(--card-radius, $card-radius);
+  box-shadow: var(--card-shadow, $card-shadow);
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+
+  .table-responsive-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+
+    /* Custom Sleek Scrollbar */
+    &::-webkit-scrollbar {
+      height: 7px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f8fafc;
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  }
+
+  .alerts-table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+    white-space: nowrap;
+    border: 1px solid var(--table-border, $table-border);
+
+    thead th {
+      padding: 13px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--table-header-color, $table-header-color) !important;
+      letter-spacing: 0.03em;
+      border: 1px solid var(--table-header-border, $table-header-border);
+      background-color: var(--table-header-bg, $table-header-bg) !important;
+      white-space: nowrap;
+      text-align: left;
+    }
+
+    tbody td {
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--text-secondary, $text-secondary);
+      border: 1px solid var(--table-border, $table-border);
+      vertical-align: middle;
+      white-space: nowrap;
+
+      &.td-alert-id {
+        font-weight: 700;
+        color: var(--text-title, $text-title);
+      }
+
+      &.td-message {
+        max-width: 360px;
+        white-space: normal;
+        line-height: 1.4;
+        color: var(--text-main, $text-main);
+      }
+    }
+
+    tbody tr {
+      transition: background 0.12s ease;
+
+      &:hover td {
+        background: var(--table-row-hover, $table-row-hover);
+      }
+    }
+
+    .badge-severity {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+
+      &.high {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      &.medium {
+        background: #fef3c7;
+        color: #d97706;
+      }
+
+      &.low {
+        background: #f1f5f9;
+        color: #64748b;
+      }
+    }
+
+    .status-text {
+      font-size: 13px;
+      font-weight: 500;
+
+      &.open {
+        color: var(--text-main, #1e293b);
+      }
+
+      &.escalated {
+        color: #dc2626;
+        font-weight: 600;
+      }
+
+      &.closed {
+        color: var(--text-muted, #64748b);
+      }
+
+      &.in-progress {
+        color: #0284c7;
+        font-weight: 600;
+      }
+
+      &.overdue {
+        color: #dc2626;
+        font-weight: 600;
+      }
+    }
+  }
+}

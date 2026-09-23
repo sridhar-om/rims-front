@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DashboardComponent } from '../dashboard.component';
 
 export interface KanbanCard {
   id: string;
@@ -30,6 +31,8 @@ export interface KanbanColumnDef {
   styleUrl: './kanban.component.scss',
 })
 export class KanbanComponent {
+  private readonly dashboard = inject(DashboardComponent, { optional: true });
+
   readonly filterMolecule = input<string>('All molecule');
   readonly filterProduct = input<string>('All product');
   readonly filterCountry = input<string>('All country');
@@ -184,10 +187,10 @@ export class KanbanComponent {
 
   filteredCards = computed(() => {
     let list = this.allCards();
-    const mol = this.filterMolecule();
-    const country = this.filterCountry();
-    const region = this.filterRegion();
-    const regContext = this.filterRegulatoryContext();
+    const mol = this.dashboard ? this.dashboard.filterMolecule() : this.filterMolecule();
+    const country = this.dashboard ? this.dashboard.filterCountry() : this.filterCountry();
+    const region = this.dashboard ? this.dashboard.filterRegion() : this.filterRegion();
+    const regContext = this.dashboard ? this.dashboard.filterRegulatoryContext() : this.filterRegulatoryContext();
 
     if (mol && mol !== 'All molecule') {
       list = list.filter((c) => c.molecule.toLowerCase().includes(mol.toLowerCase()));

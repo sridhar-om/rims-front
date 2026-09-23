@@ -1,0 +1,155 @@
+<div class="pipeline-page-container">
+
+  <!-- Top: Conversion Funnel Card -->
+  <div class="funnel-card">
+    <div class="funnel-card-header">
+      <h2 class="funnel-title">Conversion funnel</h2>
+    </div>
+
+    <!-- 4 Stage Metrics Cards -->
+    <div class="funnel-metrics-grid">
+      @for (stage of funnelStages; track stage.name) {
+        <div class="funnel-metric-card">
+          <span class="stage-name">{{ stage.name }}</span>
+          <div class="stage-percent">{{ stage.percent }}%</div>
+          <div class="stage-records">{{ stage.records }} records</div>
+          <div class="stage-indicator-bar" [style.background-color]="stage.color"></div>
+        </div>
+      }
+    </div>
+
+    <!-- Multi-Tier Funnel SVG Graphic -->
+    <div class="funnel-chart-container">
+      <svg viewBox="0 0 800 240" class="funnel-svg" preserveAspectRatio="none">
+        <!-- Tier 1: Submission -->
+        <polygon points="40,10 760,10 680,62 120,62" fill="#2563eb" />
+        <text x="400" y="41" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Submission - 40%</text>
+
+        <!-- Tier 2: Filing -->
+        <polygon points="126,67 674,67 604,119 196,119" fill="#0284c7" />
+        <text x="400" y="98" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Filing - 30%</text>
+
+        <!-- Tier 3: Approval -->
+        <polygon points="202,124 598,124 532,176 268,176" fill="#059669" />
+        <text x="400" y="155" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Approval - 20%</text>
+
+        <!-- Tier 4: Billing -->
+        <polygon points="274,181 526,181 468,233 332,233" fill="#d97706" />
+        <text x="400" y="212" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Billing - 10%</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Bottom: 2 Columns Layout -->
+  <div class="pipeline-bottom-layout">
+
+    <!-- Left: All Stages Breakdown Card -->
+    <div class="breakdown-card">
+      <div class="breakdown-card-header">
+        <h3 class="breakdown-title">All stages breakdown</h3>
+        <div class="breakdown-pill-tabs">
+          <button
+            type="button"
+            class="pill-btn"
+            [class.active]="selectedBreakdown() === 'Country'"
+            (click)="setBreakdown('Country')">
+            Country
+          </button>
+          <button
+            type="button"
+            class="pill-btn"
+            [class.active]="selectedBreakdown() === 'Region'"
+            (click)="setBreakdown('Region')">
+            Region
+          </button>
+          <button
+            type="button"
+            class="pill-btn"
+            [class.active]="selectedBreakdown() === 'Regulatory Context'"
+            (click)="setBreakdown('Regulatory Context')">
+            Regulatory Context
+          </button>
+        </div>
+      </div>
+
+      <!-- Donut Chart -->
+      <div class="donut-chart-container">
+        <svg viewBox="0 0 200 200" class="donut-svg">
+          @for (seg of donutSegments(); track seg.label) {
+            <circle
+              cx="100"
+              cy="100"
+              r="64"
+              fill="transparent"
+              [attr.stroke]="seg.color"
+              stroke-width="26"
+              [attr.stroke-dasharray]="seg.strokeDasharray"
+              [attr.transform]="seg.rotation" />
+          }
+        </svg>
+      </div>
+
+      <!-- Legend Tags Grid -->
+      <div class="breakdown-legend-grid">
+        @for (item of activeLegend(); track item.label) {
+          <div class="legend-badge">
+            <span class="legend-dot" [style.background-color]="item.color"></span>
+            <span class="legend-label">{{ item.label }}:</span>
+            <span class="legend-count">{{ item.count }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Right: All Stages Records Table Card -->
+    <div class="records-card">
+      <div class="records-card-header">
+        <span class="records-title">All stages</span>
+        <span class="records-count">&middot; {{ filteredRecords().length }} records</span>
+      </div>
+
+      <div class="table-responsive-wrapper">
+        <table class="pipeline-table">
+          <thead>
+            <tr>
+              <th class="th-record-id">Record ID</th>
+              <th>Molecule</th>
+              <th>Product</th>
+              <th>Country</th>
+              <th>Region</th>
+              <th>Regulatory Context</th>
+              <th>Stage</th>
+              <th>Status</th>
+              <th>Submitted On</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of filteredRecords(); track row.recordId) {
+              <tr>
+                <td class="td-record-id">{{ row.recordId }}</td>
+                <td>{{ row.molecule }}</td>
+                <td>{{ row.product }}</td>
+                <td>{{ row.country }}</td>
+                <td>{{ row.region }}</td>
+                <td>{{ row.regulatoryContext }}</td>
+                <td>{{ row.stage }}</td>
+                <td>
+                  <span class="badge-status" [ngClass]="row.status.toLowerCase()">
+                    {{ row.status }}
+                  </span>
+                </td>
+                <td>{{ row.submittedOn }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="text-center py-4 text-muted">No records found</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</div>

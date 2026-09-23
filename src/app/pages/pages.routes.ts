@@ -9,17 +9,22 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
+        loadChildren: () =>
+          import('./dashboard/dashboard.routes').then((m) => m.routes),
+      },
+      {
+        path: 'dossiers',
         loadComponent: () =>
-          import('./dashboard/dashboard.component').then((c) => c.DashboardComponent),
+          import('./dossiers/dossiers.component').then((c) => c.DossiersComponent),
+        data: {
+          breadcrumb: 'Dossiers',
+          description: 'Submission tracking across molecules, products, countries and markets.',
+        },
       },
       {
         path: 'projects',
-        loadComponent: () =>
-          import('./projects/projects.component').then((c) => c.ProjectsComponent),
-        data: {
-          breadcrumb: 'Projects',
-          description: 'Manage and track all projects in the portfolio.',
-        },
+        redirectTo: 'dossiers',
+        pathMatch: 'full',
       },
       {
         path: 'stages',

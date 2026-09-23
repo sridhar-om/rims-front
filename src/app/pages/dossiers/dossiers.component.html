@@ -1,0 +1,207 @@
+<div class="dossiers-page-container">
+
+  <!-- Header Section -->
+  <div class="dossiers-header">
+    <h1 class="page-title">Dossiers</h1>
+    <p class="page-subtitle">Submission tracking across molecules, products, countries and markets.</p>
+  </div>
+
+  <!-- Action Bar: Search Bar, Results Count & Add Dossier Button -->
+  <div class="action-bar">
+    <div class="search-filter-group">
+      <div class="search-input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search dossiers, molecules, countries..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearch($event)" />
+        @if (searchTerm()) {
+          <button type="button" class="btn-clear-search" (click)="onSearch('')">
+            <mat-icon class="clear-icon">close</mat-icon>
+          </button>
+        }
+      </div>
+
+      <span class="records-counter-text">
+        {{ paginatedDossiers().length }} of {{ filteredDossiers().length }} dossiers
+      </span>
+    </div>
+
+    <button type="button" class="btn-add-dossier" (click)="openAddModal()">
+      <mat-icon class="add-icon">add</mat-icon>
+      <span>Add Dossier</span>
+    </button>
+  </div>
+
+  <!-- Table Card Container -->
+  <div class="table-card">
+    <div class="table-responsive-wrapper">
+      <table class="dossiers-table">
+        <thead>
+          <tr>
+            <th class="th-dossier-id">Dossier ID</th>
+            <th>Date of Submission</th>
+            <th>Molecule Name</th>
+            <th>Name of the Product</th>
+            <th>Strength</th>
+            <th>Fill Volume</th>
+            <th>Country</th>
+            <th>Region</th>
+            <th>Type of Market</th>
+            <th>Status</th>
+            <th>Last Updated</th>
+            <th>ETA</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of paginatedDossiers(); track row.dossierId) {
+            <tr>
+              <td class="td-dossier-id">{{ row.dossierId }}</td>
+              <td class="td-date">{{ row.dateOfSubmission }}</td>
+              <td class="td-molecule">{{ row.moleculeName }}</td>
+              <td class="td-product">{{ row.productName }}</td>
+              <td class="td-strength">{{ row.strength }}</td>
+              <td class="td-fill-volume">{{ row.fillVolume }}</td>
+              <td class="td-country">{{ row.country }}</td>
+              <td class="td-region">{{ row.region }}</td>
+              <td class="td-market">{{ row.marketType }}</td>
+              <td class="td-status">
+                <span
+                  class="badge-status"
+                  [ngClass]="row.status.toLowerCase().replace(' ', '-')">
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="td-updated">{{ row.lastUpdated }}</td>
+              <td class="td-eta">{{ row.eta }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="12" class="empty-state-cell">
+                <div class="empty-state-content">
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <p class="empty-title">No dossiers found</p>
+                  <p class="empty-desc">Try modifying your search keywords or clear filters to view records.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginator Footer -->
+    <div class="table-paginator-wrapper">
+      <mat-paginator
+        [length]="filteredDossiers().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        aria-label="Select page of dossiers">
+      </mat-paginator>
+    </div>
+  </div>
+
+  <!-- Add Dossier Modal Dialog -->
+  @if (isAddModalOpen()) {
+    <div class="modal-backdrop" (click)="closeAddModal()">
+      <div class="modal-dialog-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h3 class="modal-title">New Dossier Submission</h3>
+            <p class="modal-subtitle">Enter regulatory details to track a new product dossier.</p>
+          </div>
+          <button type="button" class="btn-close-modal" (click)="closeAddModal()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Dossier ID</label>
+              <input type="text" class="form-input" [(ngModel)]="newDossier.dossierId" placeholder="DOS-1056" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Molecule Name *</label>
+              <input type="text" class="form-input" [(ngModel)]="newDossier.moleculeName" placeholder="e.g. Enoxaparin Sodium" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Product Name *</label>
+              <input type="text" class="form-input" [(ngModel)]="newDossier.productName" placeholder="e.g. Enoxalow" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Strength</label>
+              <input type="text" class="form-input" [(ngModel)]="newDossier.strength" placeholder="e.g. 40 mg/0.4 mL" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fill Volume</label>
+              <input type="text" class="form-input" [(ngModel)]="newDossier.fillVolume" placeholder="e.g. 0.4 mL or N/A (tablet)" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Country *</label>
+              <input type="text" class="form-input" [(ngModel)]="newDossier.country" placeholder="e.g. Germany" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Region</label>
+              <select class="form-select" [(ngModel)]="newDossier.region">
+                <option value="Europe">Europe</option>
+                <option value="North America">North America</option>
+                <option value="Latin America">Latin America</option>
+                <option value="Africa">Africa</option>
+                <option value="Middle East">Middle East</option>
+                <option value="Asia Pacific">Asia Pacific</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Type of Market</label>
+              <select class="form-select" [(ngModel)]="newDossier.marketType">
+                <option value="Regulated">Regulated</option>
+                <option value="Semi-Regulated">Semi-Regulated</option>
+                <option value="Emerging">Emerging</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-select" [(ngModel)]="newDossier.status">
+                <option value="Submitted">Submitted</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Approved">Approved</option>
+                <option value="Query Raised">Query Raised</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ETA</label>
+              <input type="text" class="form-input" [(ngModel)]="newDossier.eta" placeholder="e.g. 30 Nov 2026" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeAddModal()">Cancel</button>
+          <button
+            type="button"
+            class="btn-save"
+            [disabled]="!newDossier.moleculeName || !newDossier.productName || !newDossier.country"
+            (click)="saveDossier()">
+            Create Dossier
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
