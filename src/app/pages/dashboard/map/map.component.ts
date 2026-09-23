@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { DashboardComponent } from '../dashboard.component';
 
 export interface MapSubmissionRecord {
@@ -32,7 +33,7 @@ export interface MapCountryMarker {
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule, NgxChartsModule],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
@@ -58,30 +59,30 @@ export class MapComponent {
   readonly selectedCountry = signal<string | null>(null);
   readonly selectedStatus = signal<string | null>(null);
 
-  // Country markers plotted on 1000x500 Equirectangular SVG world map
+  // Country markers plotted on realistic SVG world map (viewBox 30.767 241.591 784.077 458.627)
   readonly countryMarkers: MapCountryMarker[] = [
-    { name: 'United States', x: 232, y: 156, status: 'Approved', color: '#10b981', submissionsCount: 18, hasActivity: true },
-    { name: 'Canada', x: 215, y: 108, status: 'Filed', color: '#0284c7', submissionsCount: 12, hasActivity: true },
-    { name: 'Mexico', x: 220, y: 202, status: 'Submitted', color: '#f59e0b', submissionsCount: 8, hasActivity: true },
-    { name: 'Brazil', x: 348, y: 298, status: 'Declined', color: '#ef4444', submissionsCount: 14, hasActivity: true },
-    { name: 'Argentina', x: 326, y: 372, status: 'Submitted', color: '#f59e0b', submissionsCount: 0, hasActivity: false },
-    { name: 'United Kingdom', x: 472, y: 128, status: 'Approved', color: '#10b981', submissionsCount: 15, hasActivity: true },
-    { name: 'Germany', x: 504, y: 132, status: 'Declined', color: '#ef4444', submissionsCount: 11, hasActivity: true },
-    { name: 'France', x: 486, y: 148, status: 'Filed', color: '#0284c7', submissionsCount: 9, hasActivity: true },
-    { name: 'Spain', x: 472, y: 168, status: 'Approved', color: '#10b981', submissionsCount: 10, hasActivity: true },
-    { name: 'Poland', x: 524, y: 130, status: 'Declined', color: '#ef4444', submissionsCount: 0, hasActivity: false },
-    { name: 'South Africa', x: 536, y: 362, status: 'Approved', color: '#10b981', submissionsCount: 8, hasActivity: true },
-    { name: 'Kenya', x: 566, y: 268, status: 'Declined', color: '#ef4444', submissionsCount: 6, hasActivity: true },
-    { name: 'Nigeria', x: 494, y: 246, status: 'Submitted', color: '#f59e0b', submissionsCount: 7, hasActivity: true },
-    { name: 'Egypt', x: 546, y: 198, status: 'Filed', color: '#0284c7', submissionsCount: 8, hasActivity: true },
-    { name: 'Saudi Arabia', x: 588, y: 208, status: 'Submitted', color: '#f59e0b', submissionsCount: 9, hasActivity: true },
-    { name: 'UAE', x: 614, y: 206, status: 'Filed', color: '#0284c7', submissionsCount: 0, hasActivity: false },
-    { name: 'India', x: 680, y: 228, status: 'Submitted', color: '#f59e0b', submissionsCount: 19, hasActivity: true },
-    { name: 'China', x: 754, y: 184, status: 'Filed', color: '#0284c7', submissionsCount: 22, hasActivity: true },
-    { name: 'Japan', x: 824, y: 172, status: 'Filed', color: '#0284c7', submissionsCount: 13, hasActivity: true },
-    { name: 'Australia', x: 808, y: 350, status: 'Approved', color: '#10b981', submissionsCount: 0, hasActivity: false },
-    { name: 'Vietnam', x: 752, y: 242, status: 'Approved', color: '#10b981', submissionsCount: 6, hasActivity: true },
-    { name: 'Philippines', x: 792, y: 254, status: 'Declined', color: '#ef4444', submissionsCount: 7, hasActivity: true },
+    { name: 'United States', x: 195, y: 420, status: 'Approved', color: '#10b981', submissionsCount: 18, hasActivity: true },
+    { name: 'Canada', x: 200, y: 345, status: 'Filed', color: '#0284c7', submissionsCount: 12, hasActivity: true },
+    { name: 'Mexico', x: 167, y: 465, status: 'Submitted', color: '#f59e0b', submissionsCount: 8, hasActivity: true },
+    { name: 'Brazil', x: 275, y: 570, status: 'Declined', color: '#ef4444', submissionsCount: 14, hasActivity: true },
+    { name: 'Argentina', x: 262, y: 638, status: 'Submitted', color: '#f59e0b', submissionsCount: 0, hasActivity: false },
+    { name: 'United Kingdom', x: 402, y: 382, status: 'Approved', color: '#10b981', submissionsCount: 15, hasActivity: true },
+    { name: 'Germany', x: 430, y: 393, status: 'Declined', color: '#ef4444', submissionsCount: 11, hasActivity: true },
+    { name: 'France', x: 411, y: 406, status: 'Filed', color: '#0284c7', submissionsCount: 9, hasActivity: true },
+    { name: 'Spain', x: 400, y: 426, status: 'Approved', color: '#10b981', submissionsCount: 10, hasActivity: true },
+    { name: 'Poland', x: 448, y: 389, status: 'Declined', color: '#ef4444', submissionsCount: 0, hasActivity: false },
+    { name: 'South Africa', x: 465, y: 606, status: 'Approved', color: '#10b981', submissionsCount: 8, hasActivity: true },
+    { name: 'Kenya', x: 500, y: 530, status: 'Declined', color: '#ef4444', submissionsCount: 6, hasActivity: true },
+    { name: 'Nigeria', x: 428, y: 509, status: 'Submitted', color: '#f59e0b', submissionsCount: 7, hasActivity: true },
+    { name: 'Egypt', x: 479, y: 462, status: 'Filed', color: '#0284c7', submissionsCount: 8, hasActivity: true },
+    { name: 'Saudi Arabia', x: 513, y: 468, status: 'Submitted', color: '#f59e0b', submissionsCount: 9, hasActivity: true },
+    { name: 'UAE', x: 534, y: 467, status: 'Filed', color: '#0284c7', submissionsCount: 0, hasActivity: false },
+    { name: 'India', x: 602, y: 473, status: 'Submitted', color: '#f59e0b', submissionsCount: 19, hasActivity: true },
+    { name: 'China', x: 635, y: 416, status: 'Filed', color: '#0284c7', submissionsCount: 22, hasActivity: true },
+    { name: 'Japan', x: 710, y: 428, status: 'Filed', color: '#0284c7', submissionsCount: 13, hasActivity: true },
+    { name: 'Australia', x: 718, y: 615, status: 'Approved', color: '#10b981', submissionsCount: 0, hasActivity: false },
+    { name: 'Vietnam', x: 661, y: 485, status: 'Approved', color: '#10b981', submissionsCount: 6, hasActivity: true },
+    { name: 'Philippines', x: 697, y: 500, status: 'Declined', color: '#ef4444', submissionsCount: 7, hasActivity: true },
   ];
 
   // Countries with activities

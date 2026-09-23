@@ -19,6 +19,7 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
 import { HorizontalMenuComponent } from '../theme/components/menu/horizontal-menu/horizontal-menu.component';
 import { FullScreenComponent } from '../theme/components/fullscreen/fullscreen.component';
+import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-pages',
@@ -31,6 +32,7 @@ import { FullScreenComponent } from '../theme/components/fullscreen/fullscreen.c
     FlexLayoutModule,
     UserMenuComponent,
     HorizontalMenuComponent,
+    BreadcrumbComponent
   ],
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.scss',

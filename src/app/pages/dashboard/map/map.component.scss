@@ -149,32 +149,36 @@
 
   .world-map-wrapper {
     width: 100%;
-    min-height: 380px;
+    min-height: 520px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #f8fafc;
     border-radius: 8px;
     border: 1px solid #f1f5f9;
-    padding: 12px;
+    padding: 8px 4px;
     box-sizing: border-box;
+    overflow: hidden;
 
     .world-map-svg {
       width: 100%;
       height: auto;
-      max-height: 480px;
+      max-height: 600px;
       display: block;
+      animation: map-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 
       .continents-layer {
-        .continent-path {
-          fill: #cbd5e1;
-          stroke: #94a3b8;
-          stroke-width: 0.7;
+        path {
+          fill: #d5dde5;
+          stroke: #ffffff;
+          stroke-width: 0.4;
           stroke-linejoin: round;
-          transition: fill 0.25s ease;
+          stroke-linecap: round;
+          transition: fill 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
           &:hover {
-            fill: #b0bfd2;
+            fill: #b5c4d3;
+            cursor: pointer;
           }
         }
       }
@@ -182,27 +186,47 @@
       .markers-layer {
         .country-marker-group {
           cursor: pointer;
-          transition: transform 0.2s ease;
+          transform-origin: center;
+          animation: marker-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+          animation-delay: var(--marker-delay, 0s);
 
           &:hover {
-            transform-origin: center;
-            filter: brightness(1.15);
+            .marker-halo {
+              r: 6.2;
+            }
+            .marker-core-dot {
+              r: 4.2;
+            }
           }
 
-          .marker-pulse {
+          .marker-ripple-ring {
             fill: none;
-            stroke-width: 1.5;
-            opacity: 0.4;
-            animation: pulse-ring 2.4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            stroke-width: 1.4;
+            opacity: 0;
+            animation: map-ripple 2.8s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+
+            &.second {
+              animation-delay: 1.4s;
+            }
           }
 
-          .marker-core {
-            transition: all 0.2s ease;
+          .marker-halo {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          .marker-core-dot {
+            transition: transform 0.2s ease, fill 0.2s ease, r 0.2s ease;
+          }
+
+          .marker-selection-ring {
+            animation: selection-spin 10s linear infinite;
+            transform-origin: 0 0;
           }
 
           &.selected {
-            .marker-core {
-              fill: #1e293b !important;
+            .marker-core-dot {
+              fill: #0f172a !important;
+              r: 4;
             }
           }
         }
@@ -211,18 +235,55 @@
   }
 }
 
-@keyframes pulse-ring {
+@keyframes map-appear {
   0% {
-    r: 5;
-    opacity: 0.8;
-  }
-  70% {
-    r: 12;
-    opacity: 0.1;
+    opacity: 0;
+    transform: scale(0.985);
   }
   100% {
-    r: 14;
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes map-ripple {
+  0% {
+    r: 3.5;
+    opacity: 0.85;
+    stroke-width: 1.6;
+  }
+  60% {
+    opacity: 0.35;
+    stroke-width: 1.1;
+  }
+  100% {
+    r: 16;
     opacity: 0;
+    stroke-width: 0.5;
+  }
+}
+
+@keyframes marker-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes selection-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 

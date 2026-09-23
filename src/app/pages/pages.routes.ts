@@ -27,28 +27,46 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
-        path: 'stages',
+        path: 'orders',
         loadComponent: () =>
-          import('./stages/stages.component').then((c) => c.StagesComponent),
+          import('./orders/orders.component').then((c) => c.OrdersComponent),
         data: {
-          breadcrumb: 'Stages',
-          description: 'Define and manage the stages of your project lifecycle.',
+          breadcrumb: 'Orders',
+          description: 'Log or import order date and value by molecule, product, strength, fill volume, country and channel partner.',
+        },
+      },
+      {
+        path: 'stages',
+        redirectTo: 'orders',
+        pathMatch: 'full',
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./reports/reports.component').then((c) => c.ReportsComponent),
+        data: {
+          breadcrumb: 'Reports',
+          description: 'Tabular reports related to monthly submissions, overdue report, molecule summary and traction report.',
         },
       },
       {
         path: 'gates',
+        redirectTo: 'reports',
+        pathMatch: 'full',
+      },
+      {
+        path: 'setup',
         loadComponent: () =>
-          import('./gates/gates.component').then((c) => c.GatesComponent),
+          import('./setup/setup.component').then((c) => c.SetupComponent),
         data: {
-          breadcrumb: 'Gates',
-          description: 'Configure and manage project decision gates.',
+          breadcrumb: 'Setup',
+          description: 'Configure and manage master data, products, countries and system settings.',
         },
       },
       {
         path: 'master-data',
-        loadChildren: () =>
-          import('./master-data/master-data.routes').then((m) => m.MASTER_DATA_ROUTES),
-        data: { fullBleed: true },
+        redirectTo: 'setup',
+        pathMatch: 'full',
       },
       {
         path: 'activity',
