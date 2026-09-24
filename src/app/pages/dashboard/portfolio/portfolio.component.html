@@ -18,9 +18,27 @@
   </div>
 </div>
 
+<!-- Floating Horizontal Scroll Buttons matching RPM styles and floating behaviour -->
+<div class="d-flex justify-content-end mb-2">
+  <button class="mine" mat-fab style="background-color: #e5f0fc; right: 110px;"
+    (click)="scrollLeft()" aria-label="Scroll table left" matTooltip="Scroll table left">
+    <mat-icon style="color: #12426d">fast_rewind</mat-icon>
+  </button>
+  <button class="mine" mat-fab style="background-color: #e5f0fc;"
+    (click)="scrollRight()" aria-label="Scroll table right" matTooltip="Scroll table right">
+    <mat-icon style="color: #12426d">fast_forward</mat-icon>
+  </button>
+</div>
+
 <!-- Main Grid Card (Same Grid Styles) -->
 <div class="grid-card">
-  <div class="table-responsive-wrapper">
+  <div
+    #scrollContainer
+    #tableContainer
+    id="grid-table-container"
+    class="table-responsive-wrapper"
+    style="overflow-x: auto; scroll-behavior: smooth;"
+    (scroll)="updateScrollState()">
     <table class="grid-table">
       <thead>
         <tr class="table-header-row">

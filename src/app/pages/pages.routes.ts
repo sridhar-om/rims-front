@@ -56,12 +56,8 @@ export const routes: Routes = [
       },
       {
         path: 'setup',
-        loadComponent: () =>
-          import('./setup/setup.component').then((c) => c.SetupComponent),
-        data: {
-          breadcrumb: 'Setup',
-          description: 'Configure and manage master data, products, countries and system settings.',
-        },
+        loadChildren: () =>
+          import('./setup/setup.routes').then((m) => m.SETUP_ROUTES),
       },
       {
         path: 'master-data',

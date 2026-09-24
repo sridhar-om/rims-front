@@ -1,19 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DashboardComponent } from '../dashboard.component';
 import { INITIAL_MOLECULE_RECORDS, MoleculeRecord } from '../models/dashboard.model';
 
 @Component({
   selector: 'app-portfolio',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './portfolio.component.html',
   styleUrl: './portfolio.component.scss',
 })
 export class PortfolioComponent {
+  @ViewChild('tableContainer') tableContainer!: ElementRef<HTMLDivElement>;
+
   private readonly dashboard = inject(DashboardComponent, { optional: true });
+
+  // Horizontal table scrolling
+  scrollLeft(): void {
+    if (this.tableContainer?.nativeElement) {
+      this.tableContainer.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  }
+
+  scrollRight(): void {
+    if (this.tableContainer?.nativeElement) {
+      this.tableContainer.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  }
+
+  updateScrollState(): void {}
 
   // Optional inputs for standalone usage
   readonly filterMolecule = input<string>('All molecule');

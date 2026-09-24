@@ -1,4 +1,22 @@
-<div class="kanban-board-container">
+<!-- Floating Horizontal Scroll Buttons matching RPM styles and floating behaviour -->
+<div class="d-flex justify-content-end mb-2">
+  <button class="mine" mat-fab style="background-color: #e5f0fc; right: 110px;"
+    (click)="scrollLeft()" aria-label="Scroll board left" matTooltip="Scroll board left">
+    <mat-icon style="color: #12426d">fast_rewind</mat-icon>
+  </button>
+  <button class="mine" mat-fab style="background-color: #e5f0fc;"
+    (click)="scrollRight()" aria-label="Scroll board right" matTooltip="Scroll board right">
+    <mat-icon style="color: #12426d">fast_forward</mat-icon>
+  </button>
+</div>
+
+<div
+  #scrollContainer
+  #boardContainer
+  id="kanban-board-container"
+  class="kanban-board-container"
+  style="overflow-x: auto; scroll-behavior: smooth;"
+  (scroll)="updateScrollState()">
   <div class="kanban-columns-grid">
     @for (col of columns(); track col.id) {
       <div

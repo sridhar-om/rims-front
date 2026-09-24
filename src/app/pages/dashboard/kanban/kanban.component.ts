@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ViewChild, ElementRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -31,7 +31,24 @@ export interface KanbanColumnDef {
   styleUrl: './kanban.component.scss',
 })
 export class KanbanComponent {
+  @ViewChild('boardContainer') boardContainer!: ElementRef<HTMLDivElement>;
+
   private readonly dashboard = inject(DashboardComponent, { optional: true });
+
+  // Horizontal board scrolling
+  scrollLeft(): void {
+    if (this.boardContainer?.nativeElement) {
+      this.boardContainer.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  }
+
+  scrollRight(): void {
+    if (this.boardContainer?.nativeElement) {
+      this.boardContainer.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  }
+
+  updateScrollState(): void {}
 
   readonly filterMolecule = input<string>('All molecule');
   readonly filterProduct = input<string>('All product');
