@@ -3,6 +3,7 @@ import { Settings, SettingsService } from '../../../services/settings.service';
 import { MenuService } from '../../../services/menu.service';
 import { VerticalMenuComponent } from '../menu/vertical-menu/vertical-menu.component';
 
+import { RouterLink } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
@@ -13,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
     selector: 'app-sidenav',
     imports: [
+        RouterLink,
         FlexLayoutModule,
         NgScrollbarModule,
         MatToolbarModule,

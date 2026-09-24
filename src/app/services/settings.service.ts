@@ -2,16 +2,16 @@ import { Injectable, signal, WritableSignal } from '@angular/core';
 
 export class Settings {
   constructor(public name: string,
-              public loadingSpinner: WritableSignal<boolean>,
-              public fixedHeader:boolean,
-              public sidenavIsOpened: boolean,
-              public sidenavIsPinned: boolean,
-              public sidenavUserBlock: boolean,
-              public menu: string,
-              public menuType: string,
-              public theme: string,
-              public rtl: boolean,
-              public hasFooter: boolean) { }
+    public loadingSpinner: WritableSignal<boolean>,
+    public fixedHeader: boolean,
+    public sidenavIsOpened: boolean,
+    public sidenavIsPinned: boolean,
+    public sidenavUserBlock: boolean,
+    public menu: string,
+    public menuType: string,
+    public theme: string,
+    public rtl: boolean,
+    public hasFooter: boolean) { }
 }
 
 @Injectable({
@@ -20,7 +20,7 @@ export class Settings {
 export class SettingsService {
 
   public settings = new Settings(
-    'RPM',       //theme name
+    'RIMS',       //theme name
     signal(true),   //loadingSpinner
     true,           //fixedHeader
     true,           //sidenavIsOpened

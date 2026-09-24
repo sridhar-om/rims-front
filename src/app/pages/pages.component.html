@@ -1,19 +1,14 @@
 <mat-sidenav-container [dir]="settings.rtl ? 'rtl' : 'ltr'">
+
+    <mat-sidenav #sidenav class="app-sidenav" mode="side" opened>
+        <app-sidenav></app-sidenav>
+    </mat-sidenav>
+
     <mat-sidenav-content #mainSidenavContent id="main" (scroll)="onPageScroll($event)">
 
         <header class="app-header">
             <div class="header-inner">
-                <!-- Left: Logo + Brand -->
-                <div class="header-left">
-                    <a class="brand-link" routerLink="/" aria-label="RPM Home">
-                        <img src="img/logo/rpm-logo.png" alt="RPM" class="brand-rpm-logo" />
-                    </a>
-                </div>
-
-                <!-- Center: Navigation items -->
-                <nav class="nav-bar-items" id="horizontal-menu">
-                    <app-horizontal-menu [menuParentId]="0"></app-horizontal-menu>
-                </nav>
+                <div class="header-left"></div>
 
                 <!-- Right: User Profile -->
                 <div class="header-right">
@@ -35,3 +30,4 @@
 
     </mat-sidenav-content>
 </mat-sidenav-container>
+

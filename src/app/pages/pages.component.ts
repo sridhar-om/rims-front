@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
-import { HorizontalMenuComponent } from '../theme/components/menu/horizontal-menu/horizontal-menu.component';
+import { SidenavComponent } from '../theme/components/sidenav/sidenav.component';
 import { FullScreenComponent } from '../theme/components/fullscreen/fullscreen.component';
 import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.component';
 
@@ -31,7 +31,7 @@ import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.c
     MatButtonModule,
     FlexLayoutModule,
     UserMenuComponent,
-    HorizontalMenuComponent,
+    SidenavComponent,
     BreadcrumbComponent
   ],
   templateUrl: './pages.component.html',
@@ -70,9 +70,10 @@ export class PagesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.settings.menu = 'horizontal';
-    this.settings.sidenavIsOpened = false;
-    this.settings.sidenavIsPinned = false;
+    this.settings.menu = 'vertical';
+    this.settings.menuType = 'default';
+    this.settings.sidenavIsOpened = true;
+    this.settings.sidenavIsPinned = true;
   }
 
   ngAfterViewInit(): void {

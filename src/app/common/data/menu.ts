@@ -6,7 +6,7 @@ export const applicationMenuItems: Menu[] = [
   new Menu(20, 'Orders', '/orders', null, 'layers', null, false, 0),
   new Menu(30, 'Reports', '/reports', null, 'door_front', null, false, 0),
   new Menu(40, 'Activity', '/activity', null, 'groups', null, false, 0),
-  new Menu(50, 'Setup', '/setup', null, 'database', null, false, 0),
+  new Menu(50, 'Setup', '/setup', null, 'tune', null, false, 0),
   new Menu(60, 'Admin', '/admin', null, 'verified_user', null, true, 0),
 
   // Dropdown items for Admin
