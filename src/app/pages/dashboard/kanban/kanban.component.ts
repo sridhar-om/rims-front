@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DashboardComponent } from '../dashboard.component';
+import { GridScrollerComponent } from '../../shared/grid-scroller/grid-scroller.component';
 
 export interface KanbanCard {
   id: string;
@@ -26,7 +27,7 @@ export interface KanbanColumnDef {
 @Component({
   selector: 'app-kanban',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule, GridScrollerComponent],
   templateUrl: './kanban.component.html',
   styleUrl: './kanban.component.scss',
 })

@@ -44,7 +44,7 @@
       align-items: center;
       padding: 4px 10px;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: var(--font-size-base, 15px);
       font-weight: 700;
       letter-spacing: 0.01em;
       line-height: 1.2;
@@ -84,13 +84,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 22px;
-      height: 22px;
+      min-width: 24px;
+      height: 24px;
       padding: 0 6px;
       border-radius: 6px;
       background: #ffffff;
       border: none;
-      font-size: 12px;
+      font-size: var(--font-size-base, 15px);
       font-weight: 700;
       color: var(--text-title, $text-title);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
@@ -107,7 +107,7 @@
   .column-empty {
     padding: 24px 12px;
     text-align: center;
-    font-size: 12px;
+    font-size: var(--font-size-base, 15px);
     color: var(--text-muted, $text-muted);
     border: 1px dashed var(--card-border, $card-border);
     border-radius: 8px;
@@ -145,7 +145,7 @@
   }
 
   .card-title {
-    font-size: 14.5px;
+    font-size: var(--font-size-base, 15px);
     font-weight: 700;
     color: var(--text-title, $text-title);
     line-height: 1.25;
@@ -153,7 +153,7 @@
   }
 
   .card-molecule {
-    font-size: 12.5px;
+    font-size: var(--font-size-base, 15px);
     font-weight: 500;
     color: var(--primary-color, $primary-color);
     line-height: 1.3;
@@ -198,69 +198,3 @@
     }
   }
 }
-
-/* ================= FLOATING SCROLL BUTTONS ================= */
-.d-flex {
-  display: flex;
-}
-
-.justify-content-end {
-  justify-content: flex-end;
-}
-
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mine {
-  position: fixed;
-  bottom: 80px;
-  right: 40px;
-  background-color: #e5f0fc !important;
-  --mat-fab-container-color: #e5f0fc !important;
-  --mdc-fab-container-color: #e5f0fc !important;
-  color: #12426d !important;
-  border: 1px solid #c8dff5 !important;
-  z-index: 99;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(18, 66, 109, 0.16), 0 2px 4px rgba(18, 66, 109, 0.08);
-  transition: all 0.2s ease;
-  cursor: pointer;
-
-  mat-icon {
-    color: #12426d !important;
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.15s ease;
-  }
-
-  &:hover {
-    background-color: #d4e7fb !important;
-    --mat-fab-container-color: #d4e7fb !important;
-    --mdc-fab-container-color: #d4e7fb !important;
-    border-color: #a0cbf7 !important;
-    box-shadow: 0 6px 18px rgba(18, 66, 109, 0.24), 0 3px 6px rgba(18, 66, 109, 0.12);
-    transform: translateY(-2px);
-
-    mat-icon {
-      color: #0b2d4c !important;
-      transform: scale(1.08);
-    }
-  }
-
-  &:active {
-    background-color: #c2ddf8 !important;
-    --mat-fab-container-color: #c2ddf8 !important;
-    --mdc-fab-container-color: #c2ddf8 !important;
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(18, 66, 109, 0.15);
-  }
-}
-

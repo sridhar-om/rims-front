@@ -1,8 +1,10 @@
 $font-family: 'Roboto', sans-serif;
+$font-size-base: 15px;
+$font-size: 15px;
 
 // Primary Theme Colors
 $primary-color: #015bbb;
-$primary-hover: #0e3457;
+$primary-hover: #1a6bc2;
 $primary-tint-bg: #e6eff8;
 $primary-tint-hover: rgba(229, 240, 252, 0.4);
 $primary-tint-accent: rgba(18, 66, 109, 0.12);
@@ -45,7 +47,7 @@ $healthy-low: #f59e0b;
 $toolbar-height: 64px; 
 $horizontal-menu-height: 42px;
 
-$sidenav-width: 250px;
+$sidenav-width: 280px;
 $sidenav-user-block-height: 170px;
 $mini-sidenav-user-block-height: 70px;
 

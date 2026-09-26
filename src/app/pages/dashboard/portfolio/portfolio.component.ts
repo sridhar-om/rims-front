@@ -6,11 +6,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DashboardComponent } from '../dashboard.component';
 import { INITIAL_MOLECULE_RECORDS, MoleculeRecord } from '../models/dashboard.model';
+import { GridScrollerComponent } from '../../shared/grid-scroller/grid-scroller.component';
+import { PaginatorComponent } from '../../shared/paginator/paginator.component';
 
 @Component({
   selector: 'app-portfolio',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    GridScrollerComponent,
+    PaginatorComponent,
+  ],
   templateUrl: './portfolio.component.html',
   styleUrl: './portfolio.component.scss',
 })
@@ -32,7 +42,7 @@ export class PortfolioComponent {
     }
   }
 
-  updateScrollState(): void {}
+  updateScrollState(): void { }
 
   // Optional inputs for standalone usage
   readonly filterMolecule = input<string>('All molecule');

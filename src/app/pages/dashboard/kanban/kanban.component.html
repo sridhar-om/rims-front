@@ -1,14 +1,5 @@
-<!-- Floating Horizontal Scroll Buttons matching RPM styles and floating behaviour -->
-<div class="d-flex justify-content-end mb-2">
-  <button class="mine" mat-fab style="background-color: #e5f0fc; right: 110px;"
-    (click)="scrollLeft()" aria-label="Scroll board left" matTooltip="Scroll board left">
-    <mat-icon style="color: #12426d">fast_rewind</mat-icon>
-  </button>
-  <button class="mine" mat-fab style="background-color: #e5f0fc;"
-    (click)="scrollRight()" aria-label="Scroll board right" matTooltip="Scroll board right">
-    <mat-icon style="color: #12426d">fast_forward</mat-icon>
-  </button>
-</div>
+<!-- Floating Horizontal Scroll Buttons -->
+<app-grid-scroller [target]="boardContainer" leftTooltip="Scroll board left" rightTooltip="Scroll board right"></app-grid-scroller>
 
 <div
   #scrollContainer

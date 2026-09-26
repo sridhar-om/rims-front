@@ -1,13 +1,23 @@
-<div class="sidenav-content">
+<div class="sidenav-content" [class.mini]="settingsService.isNavCollapsed()">
 
-    <div class="sidenav-header">
-        <a class="brand-link" routerLink="/" aria-label="RIMS Home">
-            <img src="rims-logo-favicon.jpeg" alt="RIMS Icon" class="brand-logo-icon" />
-            <img src="img/logo/rims-logo-text.png" alt="RIMS" class="brand-logo-text" />
-        </a>
+    <div class="sidenav-menu-toggle-wrapper">
+        <div class="menu-item">
+            <button mat-button (click)="onToggleNav()"
+                fxLayout="row" [fxLayoutAlign]="settingsService.isNavCollapsed() ? 'center center' : 'start center'"
+                [matTooltip]="settingsService.isNavCollapsed() ? 'Expand Menu' : 'Collapse Menu'" matTooltipPosition="after"
+                [matTooltipDisabled]="!settingsService.isNavCollapsed()"
+                id="menu-item-toggle">
+                <mat-icon class="menu-icon">menu</mat-icon>
+                @if (!settingsService.isNavCollapsed()) {
+                    <span class="menu-title"></span>
+                }
+            </button>
+        </div>
     </div>
 
-    <div class="sidenav-label">WORKSPACE</div>
+    @if (!settingsService.isNavCollapsed()) {
+        <!-- <div class="sidenav-label">WORKSPACE</div> -->
+    }
 
     <ng-scrollbar orientation="vertical" class="sidenav-menu-outer">
         <div id="vertical-menu">

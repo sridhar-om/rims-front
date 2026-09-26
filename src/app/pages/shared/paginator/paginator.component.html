@@ -1,0 +1,43 @@
+<div class="table-pagination-bar">
+  <div class="pagination-right">
+    <!-- Items per page selector -->
+    <div class="items-per-page">
+      <span>Items per page:</span>
+      <div class="select-per-page-wrapper">
+        <select
+          class="select-per-page"
+          [ngModel]="pageSize"
+          (ngModelChange)="onSelectPageSize($event)">
+          @for (opt of pageSizeOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Count Display -->
+    <div class="pagination-count">
+      <span>{{ countDisplay }}</span>
+    </div>
+
+    <!-- Navigation Buttons (< and >) -->
+    <div class="pagination-nav-buttons">
+      <button
+        type="button"
+        class="nav-page-btn"
+        [disabled]="currentPage === 1"
+        (click)="previousPage()"
+        aria-label="Previous page">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button
+        type="button"
+        class="nav-page-btn"
+        [disabled]="currentPage >= totalPages"
+        (click)="nextPage()"
+        aria-label="Next page">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

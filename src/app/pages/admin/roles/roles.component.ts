@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { RoleData, RolePopComponent } from './role-pop/role-pop.component';
+import { DeletePopComponent } from '../../shared/delete-pop/delete-pop.component';
+import { PaginatorComponent } from '../../shared/paginator/paginator.component';
 
 export interface RoleRow {
   id: number;
@@ -28,6 +30,8 @@ export interface RoleRow {
     MatButtonModule,
     MatTooltipModule,
     RolePopComponent,
+    DeletePopComponent,
+    PaginatorComponent,
   ],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
@@ -169,7 +173,7 @@ export class RolesComponent implements OnInit {
     return result;
   });
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   toggleFilter(): void {
     this.filterToggle.update((v) => !v);
@@ -197,10 +201,10 @@ export class RolesComponent implements OnInit {
         list.map((r) =>
           r.id === editId
             ? {
-                ...r,
-                roleName: data.roleName,
-                description: data.description,
-              }
+              ...r,
+              roleName: data.roleName,
+              description: data.description,
+            }
             : r
         )
       );

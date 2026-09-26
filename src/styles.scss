@@ -25,9 +25,14 @@
 @import "styles/buttons";
 
 /* Global Theme Variables */
+$font-size-base: 15px;
+$font-size: 15px;
+
 :root {
+  --font-size-base: 15px;
+  --font-size: 15px;
   --primary-color: #015bbb;
-  --primary-hover: #0e3457;
+  --primary-hover: #1a6bc2;
   --primary-tint-bg: #e6eff8;
   --primary-tint-hover: rgba(229, 240, 252, 0.4);
   --primary-tint-accent: rgba(18, 66, 109, 0.12);
@@ -71,3 +76,18 @@
 input, textarea, select, button {
   font-family: 'Roboto', sans-serif;
 }
+
+/* Freeze Panes Dialog Custom Overlay & Container */
+.freezepanes-dialog-panel {
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-shape: 12px;
+    padding: 0 !important;
+  }
+  .mdc-dialog__surface {
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+  }
+}
+

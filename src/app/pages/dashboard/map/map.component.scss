@@ -43,7 +43,7 @@
     justify-content: center;
 
     .metric-label {
-      font-size: 13px;
+      font-size: var(--font-size-base, 15px);
       font-weight: 500;
       color: var(--text-muted, $text-muted);
       margin-bottom: 6px;
@@ -89,7 +89,7 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-size: 12.5px;
+        font-size: var(--font-size-base, 15px);
         font-weight: 500;
         color: var(--text-secondary, $text-secondary);
         cursor: pointer;
@@ -129,7 +129,7 @@
       background: #f1f5f9;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: var(--font-size-base, 15px);
       font-weight: 500;
       color: #334155;
       cursor: pointer;
@@ -315,7 +315,7 @@
       margin-bottom: 14px;
 
       .activities-title {
-        font-size: 13.5px;
+        font-size: var(--font-size-base, 15px);
         font-weight: 700;
         color: var(--text-title, $text-title);
         margin: 0;
@@ -335,7 +335,7 @@
         background: #f8fafc;
         border: 1px solid #e2e8f0;
         border-radius: 16px;
-        font-size: 12px;
+        font-size: var(--font-size-base, 15px);
         font-weight: 500;
         color: var(--text-secondary, $text-secondary);
         cursor: pointer;
@@ -416,20 +416,20 @@
       gap: 6px;
 
       .records-title {
-        font-size: 13.5px;
+        font-size: var(--font-size-base, 15px);
         font-weight: 700;
         color: var(--text-title, $text-title);
       }
 
       .records-count {
-        font-size: 12.5px;
+        font-size: var(--font-size-base, 15px);
         color: var(--text-muted, $text-muted);
         font-weight: 500;
       }
     }
 
     .btn-reset-table-filter {
-      font-size: 11.5px;
+      font-size: var(--font-size-base, 15px);
       font-weight: 600;
       color: #015bbb;
       background: #e6eff8;
@@ -474,7 +474,7 @@
       min-width: 1100px;
       border-collapse: collapse;
       text-align: left;
-      font-size: 12.5px;
+      font-size: var(--font-size-base, 15px);
 
       thead {
         tr {
@@ -482,7 +482,7 @@
 
           th {
             padding: 10px 14px;
-            font-size: 12px;
+            font-size: var(--font-size-base, 15px);
             font-weight: 700;
             color: var(--table-header-color, #12426d);
             border-bottom: 1px solid var(--table-header-border, #d0e3f8);
@@ -552,7 +552,7 @@
 
             &.td-regulatory {
               color: var(--text-muted, $text-muted);
-              font-size: 12px;
+              font-size: var(--font-size-base, 15px);
             }
 
             &.td-stage {
@@ -562,7 +562,7 @@
             &.td-date,
             &.td-decision {
               color: var(--text-muted, $text-muted);
-              font-size: 12px;
+              font-size: var(--font-size-base, 15px);
             }
 
             &.td-value {
@@ -574,7 +574,7 @@
               display: inline-block;
               padding: 3px 8px;
               border-radius: 4px;
-              font-size: 11px;
+              font-size: var(--font-size-base, 15px);
               font-weight: 600;
               line-height: 1.2;
               text-transform: capitalize;

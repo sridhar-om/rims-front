@@ -1,1 +1,44 @@
-<p>delete-pop works!</p>
+<div class="modal-backdrop" (click)="onCancel()">
+  <div class="delete-dialog" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="delete-header">
+      <h3 class="delete-title">{{ title }}</h3>
+      <button type="button" class="btn-close-x" (click)="onCancel()" aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="delete-body">
+      <ng-content>
+        @if (message) {
+          <p>{{ message }}</p>
+        } @else if (itemName) {
+          <p>
+            Are you sure you want to delete {{ itemType ? itemType + ' ' : '' }}<strong>"{{ itemName }}"</strong>?
+          </p>
+        } @else {
+          <p>Are you sure you want to delete this {{ itemType || 'item' }}?</p>
+        }
+
+        @if (subMessage) {
+          <p class="delete-subtext">{{ subMessage }}</p>
+        }
+      </ng-content>
+    </div>
+
+    <!-- Footer -->
+    <div class="delete-footer">
+      <button type="button" class="btn-cancel" (click)="onCancel()">
+        {{ cancelText }}
+      </button>
+      <button
+        type="button"
+        class="btn-confirm-delete"
+        (click)="onConfirm()"
+        [disabled]="isLoading">
+        {{ confirmText }}
+      </button>
+    </div>
+  </div>
+</div>

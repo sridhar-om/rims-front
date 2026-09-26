@@ -11,6 +11,87 @@ export const routes: Routes = [
         path: 'dashboard',
         loadChildren: () =>
           import('./dashboard/dashboard.routes').then((m) => m.routes),
+        data: {
+          breadcrumb: 'Dashboard',
+          description: 'Dashboard page description.',
+        },
+      },
+      {
+        path: 'pipeline-projects',
+        loadComponent: () =>
+          import('./pipeline-projects/pipeline-projects.component').then(
+            (c) => c.PipelineProjectsComponent
+          ),
+        data: {
+          breadcrumb: 'Pipeline Projects',
+          description: 'Track and manage pipeline projects.',
+        },
+      },
+      {
+        path: 'eb-completed-projects',
+        loadComponent: () =>
+          import('./eb-completed-projects/eb-completed-projects.component').then(
+            (c) => c.EbCompletedProjectsComponent
+          ),
+        data: {
+          breadcrumb: 'EB completed projects',
+          description: 'Review and manage completed EB projects.',
+        },
+      },
+      {
+        path: 'bd-requests',
+        loadComponent: () =>
+          import('./bd-requests/bd-requests.component').then(
+            (c) => c.BdRequestsComponent
+          ),
+        data: {
+          breadcrumb: 'BD Requests',
+          description: 'Business development requests and tracking.',
+        },
+      },
+      {
+        path: 'ra-submission-status',
+        loadComponent: () =>
+          import('./ra-submission-status/ra-submission-status.component').then(
+            (c) => c.RaSubmissionStatusComponent
+          ),
+        data: {
+          breadcrumb: 'RA Submission Status',
+          description: 'Regulatory affairs submission tracking and status.',
+        },
+      },
+      {
+        path: 'approved-data-sharing',
+        loadComponent: () =>
+          import('./approved-data-sharing/approved-data-sharing.component').then(
+            (c) => c.ApprovedDataSharingComponent
+          ),
+        data: {
+          breadcrumb: 'Approved Data Sharing',
+          description: 'Approved data sharing records and governance.',
+        },
+      },
+      {
+        path: 'commercial-status',
+        loadComponent: () =>
+          import('./commercial-status/commercial-status.component').then(
+            (c) => c.CommercialStatusComponent
+          ),
+        data: {
+          breadcrumb: 'Commercial Status',
+          description: 'Commercialization status and market tracking.',
+        },
+      },
+      {
+        path: 'market-complaints',
+        loadComponent: () =>
+          import('./market-complaints/market-complaints.component').then(
+            (c) => c.MarketComplaintsComponent
+          ),
+        data: {
+          breadcrumb: 'Market Complaints',
+          description: 'Track and resolve market complaints.',
+        },
       },
       {
         path: 'dossiers',

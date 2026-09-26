@@ -1,0 +1,364 @@
+<div class="roles-page">
+
+  <!-- Top Action Buttons (Aligned with page header) -->
+  <div class="header-action-wrapper">
+    <div class="action-buttons-group">
+      <!-- Grid Columns Button (Freeze Panes Dialog) -->
+      <button
+        type="button"
+        class="btn-grid-columns"
+        (click)="openFreezePanes()"
+        id="btn-grid-columns"
+        matTooltip="Manage Grid Columns & Freeze Panes">
+        <mat-icon class="grid-icon">grid_on</mat-icon>
+        <span class="btn-text">Grid Columns</span>
+      </button>
+
+      <!-- Filter Toggle Button -->
+      <button
+        type="button"
+        class="btn-filter"
+        (click)="toggleFilter()"
+        [class.active]="filterToggle() || filterKeyword() || filterMarket() !== 'All' || filterPlantDataStatus() !== 'All' || filterCtdStatus() !== 'All'"
+        id="btn-filter">
+        <mat-icon class="filter-icon">tune</mat-icon>
+        <span class="btn-text">Filter</span>
+      </button>
+
+      <!-- Add EB Project Primary Button -->
+      <button
+        type="button"
+        class="btn-primary-action btn-add-primary"
+        (click)="openAddProject()"
+        id="btn-add-eb-project">
+        <span class="plus-sign">+</span>
+        <span class="btn-text">Add Project</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Collapsible Filter Panel (White background) -->
+  @if (filterToggle()) {
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-inputs">
+          <!-- Keyword -->
+          <div class="filter-item">
+            <label class="filter-label">Keyword:</label>
+            <input
+              type="text"
+              class="form-control-filter"
+              placeholder="Search Molecule, Product, API, CEP..."
+              [ngModel]="filterKeyword()"
+              (ngModelChange)="filterKeyword.set($event); currentPage.set(1)"
+            />
+          </div>
+
+          <!-- Market -->
+          <div class="filter-item">
+            <label class="filter-label">Market:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterMarket()"
+                (ngModelChange)="filterMarket.set($event); currentPage.set(1)">
+                <option value="All">Select Market</option>
+                @for (m of marketsList(); track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Plant Data Status -->
+          <div class="filter-item">
+            <label class="filter-label">Plant Data Status:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterPlantDataStatus()"
+                (ngModelChange)="filterPlantDataStatus.set($event); currentPage.set(1)">
+                <option value="All">Select Status</option>
+                @for (p of plantDataStatusesList(); track p) {
+                  <option [value]="p">{{ p }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- CTD Status -->
+          <div class="filter-item">
+            <label class="filter-label">CTD Status:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterCtdStatus()"
+                (ngModelChange)="filterCtdStatus.set($event); currentPage.set(1)">
+                <option value="All">Select Status</option>
+                @for (c of ctdStatusesList(); track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clear Button -->
+        <div class="filter-actions">
+          <button type="button" class="btn-clear" (click)="clearFilters()">
+            <mat-icon class="btn-action-icon">settings_backup_restore</mat-icon>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Main EB Completed Projects Card -->
+  <div class="roles-card">
+    <div #tableContainer class="table-responsive-wrapper">
+      <table class="roles-table">
+        <!-- Table Header (Unified single row with sort icons and search inputs) -->
+        <thead>
+          <tr class="table-header-row">
+            @for (col of selectedColumns(); track col.key) {
+              @if (col.visible !== false) {
+                <th
+                  [class]="getColumnCssClass(col.key)"
+                  [class.text-center]="col.key === 'serial' || col.key === 'plantDataStatus' || col.key === 'ctdStatus'"
+                  [class.sticky-col]="isColumnFrozen(col.key)"
+                  [style.left.px]="isColumnFrozen(col.key) ? getStickyLeft(col.key) : null">
+                  <div class="th-content-wrapper">
+                    <!-- Column Header Label & Sort Icon -->
+                    @if (col.key === 'actions') {
+                      <div class="th-title-row th-actions-title">
+                        <span class="th-label">ACTIONS</span>
+                      </div>
+                    } @else {
+                      <div
+                        class="th-title-row"
+                        [class.active-sort]="sortColumn() === col.key"
+                        (click)="onSort(col.key)"
+                        [matTooltip]="'Click to sort by ' + col.label">
+                        <span class="th-label">{{ col.label | uppercase }}</span>
+                        <mat-icon class="sort-icon" [class.sorted]="sortColumn() === col.key">
+                          @if (sortColumn() === col.key) {
+                            @if (sortDirection() === 'asc') {
+                              arrow_upward
+                            } @else if (sortDirection() === 'desc') {
+                              arrow_downward
+                            } @else {
+                              unfold_more
+                            }
+                          } @else {
+                            unfold_more
+                          }
+                        </mat-icon>
+                      </div>
+                    }
+                  </div>
+                </th>
+              }
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (row of paginatedProjects(); track row.id) {
+            <tr class="role-row">
+              @for (col of selectedColumns(); track col.key) {
+                @if (col.visible !== false) {
+                  @switch (col.key) {
+                    @case ('actions') {
+                      <td
+                        class="col-actions"
+                        [class.sticky-col]="isColumnFrozen('actions')"
+                        [style.left.px]="isColumnFrozen('actions') ? getStickyLeft('actions') : null">
+                        <div class="actions-cell-wrapper">
+                          <button
+                            type="button"
+                            class="action-edit-btn"
+                            matTooltip="Edit Project"
+                            (click)="openEditProject(row)">
+                            <mat-icon class="edit-icon">edit</mat-icon>
+                          </button>
+                          <button
+                            type="button"
+                            class="action-delete-btn"
+                            matTooltip="Delete Project"
+                            (click)="confirmDelete(row)">
+                            <mat-icon class="delete-icon">delete</mat-icon>
+                          </button>
+                        </div>
+                      </td>
+                    }
+                    @case ('serial') {
+                      <td
+                        class="td-serial text-center font-semibold"
+                        [class.sticky-col]="isColumnFrozen('serial')"
+                        [style.left.px]="isColumnFrozen('serial') ? getStickyLeft('serial') : null">
+                        {{ row.serial }}
+                      </td>
+                    }
+                    @case ('molecule') {
+                      <td
+                        class="td-molecule font-semibold"
+                        [class.sticky-col]="isColumnFrozen('molecule')"
+                        [style.left.px]="isColumnFrozen('molecule') ? getStickyLeft('molecule') : null">
+                        {{ row.molecule }}
+                      </td>
+                    }
+                    @case ('plantDataStatus') {
+                      <td
+                        class="td-plant-status text-center"
+                        [class.sticky-col]="isColumnFrozen('plantDataStatus')"
+                        [style.left.px]="isColumnFrozen('plantDataStatus') ? getStickyLeft('plantDataStatus') : null">
+                        <span class="status-badge" [ngClass]="getStatusBadgeClass(row.plantDataStatus)">
+                          {{ row.plantDataStatus || '-' }}
+                        </span>
+                      </td>
+                    }
+                    @case ('market') {
+                      <td
+                        class="td-market"
+                        [class.sticky-col]="isColumnFrozen('market')"
+                        [style.left.px]="isColumnFrozen('market') ? getStickyLeft('market') : null">
+                        {{ row.market }}
+                      </td>
+                    }
+                    @case ('productName') {
+                      <td
+                        class="td-product"
+                        [matTooltip]="row.productName"
+                        matTooltipPosition="above"
+                        [class.sticky-col]="isColumnFrozen('productName')"
+                        [style.left.px]="isColumnFrozen('productName') ? getStickyLeft('productName') : null">
+                        {{ row.productName }}
+                      </td>
+                    }
+                    @case ('pharmacopoeia') {
+                      <td
+                        class="td-pharma"
+                        [class.sticky-col]="isColumnFrozen('pharmacopoeia')"
+                        [style.left.px]="isColumnFrozen('pharmacopoeia') ? getStickyLeft('pharmacopoeia') : null">
+                        {{ row.pharmacopoeia || '-' }}
+                      </td>
+                    }
+                    @case ('dosageForm') {
+                      <td
+                        class="td-dosage"
+                        [class.sticky-col]="isColumnFrozen('dosageForm')"
+                        [style.left.px]="isColumnFrozen('dosageForm') ? getStickyLeft('dosageForm') : null">
+                        {{ row.dosageForm }}
+                      </td>
+                    }
+                    @case ('strength') {
+                      <td
+                        class="td-strength"
+                        [class.sticky-col]="isColumnFrozen('strength')"
+                        [style.left.px]="isColumnFrozen('strength') ? getStickyLeft('strength') : null">
+                        {{ row.strength }}
+                      </td>
+                    }
+                    @case ('fillVolume') {
+                      <td
+                        class="td-fill"
+                        [class.sticky-col]="isColumnFrozen('fillVolume')"
+                        [style.left.px]="isColumnFrozen('fillVolume') ? getStickyLeft('fillVolume') : null">
+                        {{ row.fillVolume }}
+                      </td>
+                    }
+                    @case ('apiManufacturer') {
+                      <td
+                        class="td-api"
+                        [class.sticky-col]="isColumnFrozen('apiManufacturer')"
+                        [style.left.px]="isColumnFrozen('apiManufacturer') ? getStickyLeft('apiManufacturer') : null">
+                        {{ row.apiManufacturer }}
+                      </td>
+                    }
+                    @case ('cepDmfNo') {
+                      <td
+                        class="td-cep"
+                        [class.sticky-col]="isColumnFrozen('cepDmfNo')"
+                        [style.left.px]="isColumnFrozen('cepDmfNo') ? getStickyLeft('cepDmfNo') : null">
+                        {{ row.cepDmfNo }}
+                      </td>
+                    }
+                    @case ('stabilityData') {
+                      <td
+                        class="td-stability"
+                        [class.sticky-col]="isColumnFrozen('stabilityData')"
+                        [style.left.px]="isColumnFrozen('stabilityData') ? getStickyLeft('stabilityData') : null">
+                        {{ row.stabilityData }}
+                      </td>
+                    }
+                    @case ('ctdStatus') {
+                      <td
+                        class="td-ctd-status text-center"
+                        [class.sticky-col]="isColumnFrozen('ctdStatus')"
+                        [style.left.px]="isColumnFrozen('ctdStatus') ? getStickyLeft('ctdStatus') : null">
+                        <span class="status-badge" [ngClass]="getStatusBadgeClass(row.ctdStatus)">
+                          {{ row.ctdStatus || '-' }}
+                        </span>
+                      </td>
+                    }
+                    @case ('remarks') {
+                      <td
+                        class="td-remarks"
+                        [matTooltip]="row.remarks || '-'"
+                        matTooltipPosition="above"
+                        [class.sticky-col]="isColumnFrozen('remarks')"
+                        [style.left.px]="isColumnFrozen('remarks') ? getStickyLeft('remarks') : null">
+                        {{ row.remarks || '-' }}
+                      </td>
+                    }
+                  }
+                }
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="visibleColumnCount()" class="text-center py-4 text-muted">
+                No EB completed projects found
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Reusable Bottom Pagination Bar -->
+    <app-paginator
+      [totalItems]="filteredProjects().length"
+      [pageSize]="pageSize()"
+      [currentPage]="currentPage()"
+      (pageChange)="currentPage.set($event)"
+      (pageSizeChange)="onPageSizeChange($event)">
+    </app-paginator>
+  </div>
+
+  <!-- Reusable Floating Grid Scroller for smooth horizontal table scrolling -->
+  <app-grid-scroller [target]="tableContainer"></app-grid-scroller>
+
+  <!-- Add / Edit EB Completed Project Modal Pop -->
+  @if (showEbModal()) {
+    <app-eb-pop
+      [projectData]="selectedProjectForEdit()"
+      [nextSerial]="ebProjectsList().length + 1"
+      (save)="onSaveProject($event)"
+      (close)="closeEbModal()">
+    </app-eb-pop>
+  }
+
+  <!-- Delete Confirmation Modal Pop -->
+  @if (showDeleteModal() && targetDeleteProject()) {
+    <app-delete-pop
+      title="Delete EB Completed Project"
+      itemType="EB completed project"
+      [itemName]="targetDeleteProject()?.productName || targetDeleteProject()?.molecule"
+      subMessage="This project will be permanently removed from the EB completed projects registry."
+      (confirm)="executeDelete()"
+      (cancel)="closeDeleteModal()">
+    </app-delete-pop>
+  }
+</div>

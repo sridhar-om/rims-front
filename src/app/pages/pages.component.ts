@@ -8,10 +8,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Settings, SettingsService } from '../services/settings.service';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,7 @@ import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.c
   selector: 'app-pages',
   imports: [
     RouterOutlet,
+    RouterLink,
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
@@ -42,6 +43,15 @@ export class PagesComponent implements OnInit, AfterViewInit {
   @ViewChild('backToTop') backToTop: any;
   @ViewChild('mainSidenavContent') mainSidenavContent: any;
   @ViewChild('mainContent') mainContent!: ElementRef;
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
+  public toggleNav(): void {
+    this.settingsService.toggleNavCollapse();
+  }
+
+  public toggleSidenav(): void {
+    this.toggleNav();
+  }
 
   readonly router = inject(Router);
   readonly activatedRoute = inject(ActivatedRoute); // Injected to read route data

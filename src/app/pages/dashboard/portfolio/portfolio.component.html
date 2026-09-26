@@ -18,17 +18,8 @@
   </div>
 </div>
 
-<!-- Floating Horizontal Scroll Buttons matching RPM styles and floating behaviour -->
-<div class="d-flex justify-content-end mb-2">
-  <button class="mine" mat-fab style="background-color: #e5f0fc; right: 110px;"
-    (click)="scrollLeft()" aria-label="Scroll table left" matTooltip="Scroll table left">
-    <mat-icon style="color: #12426d">fast_rewind</mat-icon>
-  </button>
-  <button class="mine" mat-fab style="background-color: #e5f0fc;"
-    (click)="scrollRight()" aria-label="Scroll table right" matTooltip="Scroll table right">
-    <mat-icon style="color: #12426d">fast_forward</mat-icon>
-  </button>
-</div>
+<!-- Floating Horizontal Scroll Buttons -->
+<app-grid-scroller [target]="tableContainer"></app-grid-scroller>
 
 <!-- Main Grid Card (Same Grid Styles) -->
 <div class="grid-card">
@@ -124,49 +115,13 @@
     </table>
   </div>
 
-  <!-- Bottom Pagination Bar -->
-  <div class="table-pagination-bar">
-    <div class="pagination-right">
-      <!-- Items per page selector -->
-      <div class="items-per-page">
-        <span>Items per page:</span>
-        <div class="select-per-page-wrapper">
-          <select
-            class="select-per-page"
-            [ngModel]="pageSize()"
-            (ngModelChange)="onPageSizeChange($event)">
-            <option [value]="5">5</option>
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Count Display -->
-      <div class="pagination-count">
-        <span>{{ startItemIndex() }} - {{ endItemIndex() }} of {{ filteredRecords().length }}</span>
-      </div>
-
-      <!-- Navigation Buttons (< and >) -->
-      <div class="pagination-nav-buttons">
-        <button
-          type="button"
-          class="nav-page-btn"
-          [disabled]="currentPage() === 1"
-          (click)="previousPage()"
-          aria-label="Previous page">
-          <mat-icon>chevron_left</mat-icon>
-        </button>
-        <button
-          type="button"
-          class="nav-page-btn"
-          [disabled]="currentPage() >= totalPages()"
-          (click)="nextPage()"
-          aria-label="Next page">
-          <mat-icon>chevron_right</mat-icon>
-        </button>
-      </div>
-    </div>
-  </div>
+  <!-- Reusable Bottom Pagination Bar -->
+  <app-paginator
+    [totalItems]="filteredRecords().length"
+    [pageSize]="pageSize()"
+    [currentPage]="currentPage()"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    (pageChange)="currentPage.set($event)"
+    (pageSizeChange)="onPageSizeChange($event)">
+  </app-paginator>
 </div>

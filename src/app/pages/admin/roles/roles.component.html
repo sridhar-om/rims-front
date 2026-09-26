@@ -137,24 +137,15 @@
       </table>
     </div>
 
-    <!-- Bottom Pagination Bar -->
-    <div class="table-pagination-bar">
-      <div class="pagination-left"></div>
-      <div class="pagination-right">
-        <div class="items-per-page">
-          <span>Items per page:</span>
-          <select class="select-per-page" [ngModel]="pageSize()" (ngModelChange)="pageSize.set($event)">
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-          </select>
-        </div>
-
-        <div class="pagination-count">
-          <span>1 - {{ filteredRoles().length }} of {{ filteredRoles().length }}</span>
-        </div>
-      </div>
-    </div>
+    <!-- Reusable Bottom Pagination Bar -->
+    <app-paginator
+      [totalItems]="filteredRoles().length"
+      [pageSize]="pageSize()"
+      [currentPage]="currentPage()"
+      [pageSizeOptions]="[10, 25, 50]"
+      (pageChange)="currentPage.set($event)"
+      (pageSizeChange)="pageSize.set($event)">
+    </app-paginator>
   </div>
 
   <!-- Add / Edit Role Modal Popup -->
@@ -168,27 +159,14 @@
 
   <!-- Delete Confirmation Modal -->
   @if (showDeleteConfirmModal() && deleteTargetRole()) {
-    <div class="modal-backdrop" (click)="closeDeleteModal()">
-      <div class="delete-dialog" (click)="$event.stopPropagation()">
-        <div class="delete-header">
-          <h3 class="delete-title">Delete Role</h3>
-          <button type="button" class="btn-close-x" (click)="closeDeleteModal()">
-            <mat-icon>close</mat-icon>
-          </button>
-        </div>
-        <div class="delete-body">
-          <p>
-            Are you sure you want to delete role
-            <strong>"{{ deleteTargetRole()?.roleName }}"</strong>?
-          </p>
-          <p class="delete-subtext">Users assigned to this role will lose their associated privileges.</p>
-        </div>
-        <div class="delete-footer">
-          <button type="button" class="btn-cancel" (click)="closeDeleteModal()">Cancel</button>
-          <button type="button" class="btn-confirm-delete" (click)="executeDelete()">Delete</button>
-        </div>
-      </div>
-    </div>
+    <app-delete-pop
+      title="Delete Role"
+      itemType="role"
+      [itemName]="deleteTargetRole()?.roleName"
+      subMessage="Users assigned to this role will lose their associated privileges."
+      (confirm)="executeDelete()"
+      (cancel)="closeDeleteModal()">
+    </app-delete-pop>
   }
 
 </div>

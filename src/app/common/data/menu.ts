@@ -2,9 +2,13 @@ import { Menu } from '../models/menu.model';
 
 export const applicationMenuItems: Menu[] = [
   new Menu(1, 'Dashboard', '/dashboard', null, 'grid_view', null, false, 0),
-  new Menu(10, 'Dossiers', '/dossiers', null, 'business_center', null, false, 0),
-  new Menu(20, 'Orders', '/orders', null, 'layers', null, false, 0),
-  new Menu(30, 'Reports', '/reports', null, 'door_front', null, false, 0),
+  new Menu(2, 'Pipeline Projects', '/pipeline-projects', null, 'timeline', null, false, 0),
+  new Menu(3, 'EB Completed Projects', '/eb-completed-projects', null, 'task_alt', null, false, 0),
+  new Menu(4, 'BD Requests', '/bd-requests', null, 'business_center', null, false, 0),
+  new Menu(5, 'RA Submission Status', '/ra-submission-status', null, 'assignment_turned_in', null, false, 0),
+  new Menu(6, 'Approved Data Sharing', '/approved-data-sharing', null, 'share', null, false, 0),
+  new Menu(7, 'Commercial Status', '/commercial-status', null, 'store', null, false, 0),
+  new Menu(8, 'Market Complaints', '/market-complaints', null, 'report_problem', null, false, 0),
   new Menu(50, 'Setup', '/setup', null, 'tune', null, true, 0),
 
   // Dropdown items for Setup

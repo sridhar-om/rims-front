@@ -1,26 +1,31 @@
-<mat-sidenav-container [dir]="settings.rtl ? 'rtl' : 'ltr'">
+<header class="app-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a class="brand-link" routerLink="/" aria-label="RIMS Home">
+                <img src="rims-logo-favicon.jpeg" alt="RIMS Icon" class="brand-logo-icon" />
+                <img src="img/logo/rims-logo-text.png" alt="RIMS" class="brand-logo-text" />
+            </a>
+        </div>
 
-    <mat-sidenav #sidenav class="app-sidenav" mode="side" opened>
+        <!-- Right: User Profile -->
+        <div class="header-right">
+            <app-user-menu></app-user-menu>
+        </div>
+    </div>
+</header>
+
+<mat-sidenav-container [class.mini-nav]="settingsService.isNavCollapsed()" [dir]="settings.rtl ? 'rtl' : 'ltr'">
+
+    <mat-sidenav #sidenav class="app-sidenav" [class.mini]="settingsService.isNavCollapsed()" mode="side" opened>
         <app-sidenav></app-sidenav>
     </mat-sidenav>
 
     <mat-sidenav-content #mainSidenavContent id="main" (scroll)="onPageScroll($event)">
 
-        <header class="app-header">
-            <div class="header-inner">
-                <div class="header-left"></div>
-
-                <!-- Right: User Profile -->
-                <div class="header-right">
-                    <app-user-menu></app-user-menu>
-                </div>
-            </div>
-        </header>
-
         <div id="main-content" class="sidenav-content-inner transition-2" [class.full-bleed]="isFullBleed()">
             @if (!isFullBleed()) {
-        <app-breadcrumb></app-breadcrumb>
-    }
+                <app-breadcrumb></app-breadcrumb>
+            }
             <router-outlet></router-outlet>
         </div>
 
@@ -30,4 +35,3 @@
 
     </mat-sidenav-content>
 </mat-sidenav-container>
-

@@ -18,6 +18,7 @@ export class Settings {
   providedIn: 'root'
 })
 export class SettingsService {
+  public isNavCollapsed = signal(false);
 
   public settings = new Settings(
     'RIMS',       //theme name
@@ -34,4 +35,9 @@ export class SettingsService {
   )
 
   constructor() { }
+
+  public toggleNavCollapse(): void {
+    this.isNavCollapsed.update(v => !v);
+    this.settings.menuType = this.isNavCollapsed() ? 'mini' : 'default';
+  }
 }

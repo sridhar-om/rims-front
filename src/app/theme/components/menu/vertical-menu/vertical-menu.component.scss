@@ -4,12 +4,26 @@
     .mat-mdc-button {
         width: 100%;
         font-weight: 400;
+        font-size: var(--font-size-base, 15px);
         height: 42px;
         padding-left: 16px;
         border-radius: 0;
+        white-space: nowrap;
+
+        .menu-title {
+            font-size: var(--font-size-base, 15px);
+        }
+
+        .mdc-button__label {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            white-space: nowrap;
+        }
 
         .mat-icon.menu-icon {
             margin-right: 12px;
+            flex-shrink: 0;
         }
 
         .mat-icon.menu-expand-icon {
@@ -29,19 +43,22 @@
 }
 
 .sub-menu {
-    @include menu-level-padding('ltr');
     max-height: 0;
     overflow: hidden;
+    position: relative;
+    margin-left: 24px;
+    padding-left: 6px;
+    border-left: 2px solid #cbd5e1;
     -webkit-transition: max-height 0.25s ease-out;
     -moz-transition: max-height 0.25s ease-out;
     transition: max-height 0.25s ease-out;
 
     .mat-mdc-button {
-        padding-left: 40px;
+        padding-left: 10px;
     }
 
     &.show {
-        max-height: 500px;
+        max-height: 1500px;
         -webkit-transition: max-height 0.25s ease-in;
         -moz-transition: max-height 0.25s ease-in;
         transition: max-height 0.25s ease-in;

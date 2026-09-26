@@ -1,0 +1,237 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        {{ pipelineData ? 'Edit Pipeline Project' : 'Add Pipeline Project' }}
+      </h3>
+      <button type="button" class="modal-close-btn" (click)="onClose()" aria-label="Close dialog">
+        <mat-icon class="close-icon">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="onSave()" class="modal-form" autocomplete="off">
+      <div class="modal-body">
+        <div class="form-grid">
+          <!-- Molecule -->
+          <div class="form-group">
+            <label for="pipeline-molecule" class="form-label">
+              Molecule <span class="required-star">*</span>
+            </label>
+            <input
+              id="pipeline-molecule"
+              type="text"
+              name="molecule"
+              class="form-input"
+              [class.input-error]="submitted && !molecule.trim()"
+              placeholder="e.g. Abiraterone"
+              [(ngModel)]="molecule"
+              required
+              autofocus />
+            <span class="error-msg" *ngIf="submitted && !molecule.trim()">
+              Molecule is required
+            </span>
+          </div>
+
+          <!-- Market -->
+          <div class="form-group">
+            <label for="pipeline-market" class="form-label">
+              Market <span class="required-star">*</span>
+            </label>
+            <div class="select-wrapper">
+              <select
+                id="pipeline-market"
+                name="market"
+                class="form-input form-select"
+                [(ngModel)]="market">
+                @for (m of marketOptions; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Product Name (Full width) -->
+          <div class="form-group full-width">
+            <label for="pipeline-product" class="form-label">
+              Product Name <span class="required-star">*</span>
+            </label>
+            <input
+              id="pipeline-product"
+              type="text"
+              name="productName"
+              class="form-input"
+              [class.input-error]="submitted && !productName.trim()"
+              placeholder="e.g. Abiraterone Acetate Film Coated Tablets"
+              [(ngModel)]="productName"
+              required />
+            <span class="error-msg" *ngIf="submitted && !productName.trim()">
+              Product Name is required
+            </span>
+          </div>
+
+          <!-- Pharmacopoeia -->
+          <div class="form-group">
+            <label for="pipeline-pharmacopoeia" class="form-label">Pharmacopoeia</label>
+            <div class="select-wrapper">
+              <select
+                id="pipeline-pharmacopoeia"
+                name="pharmacopoeia"
+                class="form-input form-select"
+                [(ngModel)]="pharmacopoeia">
+                <option value="">None / Custom</option>
+                @for (p of pharmacopoeiaOptions; track p) {
+                  <option [value]="p">{{ p }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Dosage Form -->
+          <div class="form-group">
+            <label for="pipeline-dosage" class="form-label">Dosage Form</label>
+            <div class="select-wrapper">
+              <select
+                id="pipeline-dosage"
+                name="dosageForm"
+                class="form-input form-select"
+                [(ngModel)]="dosageForm">
+                @for (d of dosageOptions; track d) {
+                  <option [value]="d">{{ d }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Strength -->
+          <div class="form-group">
+            <label for="pipeline-strength" class="form-label">Strength</label>
+            <input
+              id="pipeline-strength"
+              type="text"
+              name="strength"
+              class="form-input"
+              placeholder="e.g. 250 mg & 500 mg"
+              [(ngModel)]="strength" />
+          </div>
+
+          <!-- Fill Volume -->
+          <div class="form-group">
+            <label for="pipeline-fill-volume" class="form-label">Fill Volume</label>
+            <input
+              id="pipeline-fill-volume"
+              type="text"
+              name="fillVolume"
+              class="form-input"
+              placeholder="e.g. 4 ml or NA"
+              [(ngModel)]="fillVolume" />
+          </div>
+
+          <!-- API Manufacturer -->
+          <div class="form-group">
+            <label for="pipeline-api-mfg" class="form-label">API Manufacturer</label>
+            <input
+              id="pipeline-api-mfg"
+              type="text"
+              name="apiManufacturer"
+              class="form-input"
+              placeholder="e.g. ABC, Cipla API"
+              [(ngModel)]="apiManufacturer" />
+          </div>
+
+          <!-- CEP / DMF No -->
+          <div class="form-group">
+            <label for="pipeline-cep-dmf" class="form-label">CEP / DMF No</label>
+            <input
+              id="pipeline-cep-dmf"
+              type="text"
+              name="cepDmfNo"
+              class="form-input"
+              placeholder="e.g. DMF: 124edrok"
+              [(ngModel)]="cepDmfNo" />
+          </div>
+
+          <!-- Stability Data -->
+          <div class="form-group">
+            <label for="pipeline-stability" class="form-label">Stability Data</label>
+            <div class="select-wrapper">
+              <select
+                id="pipeline-stability"
+                name="stabilityData"
+                class="form-input form-select"
+                [(ngModel)]="stabilityData">
+                @for (s of stabilityOptions; track s) {
+                  <option [value]="s">{{ s }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Project Status -->
+          <div class="form-group">
+            <label for="pipeline-status" class="form-label">Project Status</label>
+            <div class="select-wrapper">
+              <select
+                id="pipeline-status"
+                name="projectStatus"
+                class="form-input form-select"
+                [(ngModel)]="projectStatus">
+                @for (st of statusOptions; track st) {
+                  <option [value]="st">{{ st }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Percent Completion -->
+          <div class="form-group full-width">
+            <div class="completion-header">
+              <label for="pipeline-completion" class="form-label">Percent Project Completion</label>
+              <span class="completion-badge">{{ percentCompletion }}%</span>
+            </div>
+            <div class="completion-slider-row">
+              <input
+                id="pipeline-completion"
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                name="percentCompletion"
+                class="completion-range"
+                [(ngModel)]="percentCompletion" />
+              <input
+                type="number"
+                min="0"
+                max="100"
+                class="form-input completion-num-input"
+                [(ngModel)]="percentCompletion" />
+            </div>
+          </div>
+
+          <!-- Remarks (Full width) -->
+          <div class="form-group full-width">
+            <label for="pipeline-remarks" class="form-label">Remarks</label>
+            <textarea
+              id="pipeline-remarks"
+              name="remarks"
+              class="form-textarea"
+              rows="2"
+              placeholder="Enter remarks, notes, or milestones..."
+              [(ngModel)]="remarks"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="onClose()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-save" id="btn-save-pipeline">
+          {{ pipelineData ? 'Update Pipeline' : 'Save Pipeline' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

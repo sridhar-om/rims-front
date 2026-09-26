@@ -1,33 +1,37 @@
-import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';  
+import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';  
 import { Settings, SettingsService } from '../../../services/settings.service';
 import { MenuService } from '../../../services/menu.service';
 import { VerticalMenuComponent } from '../menu/vertical-menu/vertical-menu.component';
 
-import { RouterLink } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-sidenav',
     imports: [
-        RouterLink,
         FlexLayoutModule,
         NgScrollbarModule,
         MatToolbarModule,
         MatButtonModule,
         MatIconModule,
+        MatTooltipModule,
         VerticalMenuComponent
     ],
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    host: {
+      '[class.mini]': 'settingsService.isNavCollapsed()'
+    }
 })
 export class SidenavComponent implements OnInit {
+  @Output() toggleNav = new EventEmitter<void>();
   public userImage = 'img/users/user.jpg';
   public menuItems: Array<any>;
   public settings: Settings;
@@ -37,6 +41,10 @@ export class SidenavComponent implements OnInit {
 
   ngOnInit() {
     this.menuItems = this.menuService.getVerticalMenuItems();
+  }
+
+  public onToggleNav(): void {
+    this.settingsService.toggleNavCollapse();
   }
 
   public closeSubMenus(){
