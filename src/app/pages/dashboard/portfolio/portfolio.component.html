@@ -33,16 +33,32 @@
     <table class="grid-table">
       <thead>
         <tr class="table-header-row">
-          <th class="th-molecule text-left">Molecule</th>
-          <th class="th-num text-center">Submitted Countries</th>
-          <th class="th-num text-center">Not Submitted Countries</th>
-          <th class="th-num text-center">Products</th>
-          <th class="th-num text-center">Variants (SKU)</th>
-          <th class="th-num text-center">Submissions</th>
-          <th class="th-num text-center">Rejections</th>
-          <th class="th-num text-center">Overdue Activity</th>
-          <th class="th-num text-center">Blackout</th>
-          <th class="th-healthy text-center">Healthy</th>
+          @for (col of columns; track col.key) {
+            <th
+              [class]="col.key === 'molecule' ? 'th-molecule text-left' : (col.key === 'healthy' ? 'th-healthy text-center' : 'th-num text-center')"
+              (click)="onSort(col.key)">
+              <div class="th-content-wrapper" [class.justify-center]="col.align === 'center'">
+                <div
+                  class="th-title-row"
+                  [class.active-sort]="sortColumn() === col.key">
+                  <span class="th-label">{{ col.label }}</span>
+                  <mat-icon class="sort-icon" [class.sorted]="sortColumn() === col.key">
+                    @if (sortColumn() === col.key) {
+                      @if (sortDirection() === 'asc') {
+                        arrow_upward
+                      } @else if (sortDirection() === 'desc') {
+                        arrow_downward
+                      } @else {
+                        unfold_more
+                      }
+                    } @else {
+                      unfold_more
+                    }
+                  </mat-icon>
+                </div>
+              </div>
+            </th>
+          }
         </tr>
       </thead>
 
@@ -117,7 +133,7 @@
 
   <!-- Reusable Bottom Pagination Bar -->
   <app-paginator
-    [totalItems]="filteredRecords().length"
+    [totalItems]="sortedRecords().length"
     [pageSize]="pageSize()"
     [currentPage]="currentPage()"
     [pageSizeOptions]="[5, 10, 25, 50]"

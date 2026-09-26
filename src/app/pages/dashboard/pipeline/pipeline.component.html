@@ -20,22 +20,22 @@
 
     <!-- Multi-Tier Funnel SVG Graphic -->
     <div class="funnel-chart-container">
-      <svg viewBox="0 0 800 240" class="funnel-svg" preserveAspectRatio="none">
+      <svg viewBox="0 0 1000 240" class="funnel-svg" preserveAspectRatio="none">
         <!-- Tier 1: Submission -->
-        <polygon points="40,10 760,10 680,62 120,62" fill="#2563eb" />
-        <text x="400" y="41" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Submission - 40%</text>
+        <polygon points="20,10 980,10 880,62 120,62" fill="#2563eb" />
+        <text x="500" y="41" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Submission - 40%</text>
 
         <!-- Tier 2: Filing -->
-        <polygon points="126,67 674,67 604,119 196,119" fill="#0284c7" />
-        <text x="400" y="98" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Filing - 30%</text>
+        <polygon points="126,67 874,67 784,119 216,119" fill="#0284c7" />
+        <text x="500" y="98" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Filing - 30%</text>
 
         <!-- Tier 3: Approval -->
-        <polygon points="202,124 598,124 532,176 268,176" fill="#059669" />
-        <text x="400" y="155" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Approval - 20%</text>
+        <polygon points="222,124 778,124 692,176 308,176" fill="#059669" />
+        <text x="500" y="155" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Approval - 20%</text>
 
         <!-- Tier 4: Billing -->
-        <polygon points="274,181 526,181 468,233 332,233" fill="#d97706" />
-        <text x="400" y="212" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Billing - 10%</text>
+        <polygon points="314,181 686,181 608,233 392,233" fill="#d97706" />
+        <text x="500" y="212" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="0.02em">Billing - 10%</text>
       </svg>
     </div>
   </div>
@@ -72,21 +72,18 @@
         </div>
       </div>
 
-      <!-- Donut Chart -->
+      <!-- Animated Donut Chart -->
       <div class="donut-chart-container">
-        <svg viewBox="0 0 200 200" class="donut-svg">
-          @for (seg of donutSegments(); track seg.label) {
-            <circle
-              cx="100"
-              cy="100"
-              r="64"
-              fill="transparent"
-              [attr.stroke]="seg.color"
-              stroke-width="26"
-              [attr.stroke-dasharray]="seg.strokeDasharray"
-              [attr.transform]="seg.rotation" />
-          }
-        </svg>
+        <ngx-charts-pie-chart
+          [results]="chartData()"
+          [doughnut]="true"
+          [arcWidth]="0.38"
+          [animations]="true"
+          [customColors]="chartCustomColors()"
+          [tooltipDisabled]="false"
+          [legend]="false"
+          [labels]="false">
+        </ngx-charts-pie-chart>
       </div>
 
       <!-- Legend Tags Grid -->
@@ -103,28 +100,45 @@
 
     <!-- Right: All Stages Records Table Card -->
     <div class="records-card">
-      <div class="records-card-header">
+      <!-- <div class="records-card-header">
         <span class="records-title">All stages</span>
-        <span class="records-count">&middot; {{ filteredRecords().length }} records</span>
-      </div>
+        <span class="records-count">&middot; {{ sortedRecords().length }} records</span>
+      </div> -->
 
-      <div class="table-responsive-wrapper">
+      <div #tableContainer class="table-responsive-wrapper">
         <table class="pipeline-table">
           <thead>
             <tr>
-              <th class="th-record-id">Record ID</th>
-              <th>Molecule</th>
-              <th>Product</th>
-              <th>Country</th>
-              <th>Region</th>
-              <th>Regulatory Context</th>
-              <th>Stage</th>
-              <th>Status</th>
-              <th>Submitted On</th>
+              @for (col of columns; track col.key) {
+                <th
+                  [class]="'th-' + col.key"
+                  (click)="onSort(col.key)">
+                  <div class="th-content-wrapper">
+                    <div
+                      class="th-title-row"
+                      [class.active-sort]="sortColumn() === col.key">
+                      <span class="th-label">{{ col.label }}</span>
+                      <mat-icon class="sort-icon" [class.sorted]="sortColumn() === col.key">
+                        @if (sortColumn() === col.key) {
+                          @if (sortDirection() === 'asc') {
+                            arrow_upward
+                          } @else if (sortDirection() === 'desc') {
+                            arrow_downward
+                          } @else {
+                            unfold_more
+                          }
+                        } @else {
+                          unfold_more
+                        }
+                      </mat-icon>
+                    </div>
+                  </div>
+                </th>
+              }
             </tr>
           </thead>
           <tbody>
-            @for (row of filteredRecords(); track row.recordId) {
+            @for (row of paginatedRecords(); track row.recordId) {
               <tr>
                 <td class="td-record-id">{{ row.recordId }}</td>
                 <td>{{ row.molecule }}</td>
@@ -142,13 +156,25 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="9" class="text-center py-4 text-muted">No records found</td>
+                <td [attr.colspan]="columns.length" class="text-center py-4 text-muted">No records found</td>
               </tr>
             }
           </tbody>
         </table>
       </div>
+
+      <!-- Reusable Bottom Pagination Bar -->
+      <app-paginator
+        [totalItems]="sortedRecords().length"
+        [pageSize]="pageSize()"
+        [currentPage]="currentPage()"
+        (pageChange)="currentPage.set($event)"
+        (pageSizeChange)="onPageSizeChange($event)">
+      </app-paginator>
     </div>
+
+    <!-- Reusable Floating Grid Scroller for smooth horizontal table scrolling -->
+    <app-grid-scroller [target]="tableContainer"></app-grid-scroller>
 
   </div>
 

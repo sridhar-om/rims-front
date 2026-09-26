@@ -1,0 +1,709 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <!-- Header (exact match with eb-pop) -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        {{ submissionData ? 'Edit RA Submission' : 'Add RA Submission' }}
+      </h3>
+      <button type="button" class="modal-close-btn" (click)="onClose()" aria-label="Close dialog">
+        <mat-icon class="close-icon">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="onSave()" class="modal-form" autocomplete="off">
+      <div class="modal-body-wrapper">
+        <!-- Vertical Tabs Sidebar -->
+        <div class="tab-sidebar">
+          <button
+            type="button"
+            class="tab-btn"
+            [class.active]="activeTab() === 'overview'"
+            (click)="setTab('overview')">
+            Overview
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            [class.active]="activeTab() === 'submission'"
+            (click)="setTab('submission')">
+            Submission
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            [class.active]="activeTab() === 'approval'"
+            (click)="setTab('approval')">
+            Approval
+          </button>
+        </div>
+
+        <!-- Tab Body Content Area (Two Columns per Tab) -->
+        <div class="tab-content-area">
+          <!-- TAB 1: OVERVIEW -->
+          @if (activeTab() === 'overview') {
+            <div class="two-columns-layout">
+              <!-- Column 1 -->
+              <div class="column-group">
+                <!-- Dossier ID -->
+                <div class="form-group">
+                  <label for="pop-dossier-id" class="form-label">
+                    Dossier ID <span class="required-star">*</span>
+                  </label>
+                  <input
+                    id="pop-dossier-id"
+                    type="text"
+                    name="dossierId"
+                    class="form-input"
+                    [class.input-error]="submitted && !form.dossierId?.trim()"
+                    placeholder="e.g. RA09222025"
+                    [(ngModel)]="form.dossierId"
+                    required
+                    autofocus />
+                  <span class="error-msg" *ngIf="submitted && !form.dossierId?.trim()">
+                    Dossier ID is required
+                  </span>
+                </div>
+
+                <!-- Country -->
+                <div class="form-group">
+                  <label for="pop-country" class="form-label">Country</label>
+                  <input
+                    id="pop-country"
+                    type="text"
+                    name="country"
+                    class="form-input"
+                    placeholder="e.g. Germany"
+                    [(ngModel)]="form.country" />
+                </div>
+
+                <!-- Region -->
+                <div class="form-group">
+                  <label for="pop-region" class="form-label">Region</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-region"
+                      name="region"
+                      class="form-input form-select"
+                      [(ngModel)]="form.region">
+                      @for (r of regionOptions; track r) {
+                        <option [value]="r">{{ r }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Dossier Type -->
+                <div class="form-group">
+                  <label for="pop-dossier-type" class="form-label">Dossier Type</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-dossier-type"
+                      name="dossierType"
+                      class="form-input form-select"
+                      [(ngModel)]="form.dossierType">
+                      @for (dt of dossierTypeOptions; track dt) {
+                        <option [value]="dt">{{ dt }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Market -->
+                <div class="form-group">
+                  <label for="pop-market" class="form-label">Market</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-market"
+                      name="market"
+                      class="form-input form-select"
+                      [(ngModel)]="form.market">
+                      @for (m of marketOptions; track m) {
+                        <option [value]="m">{{ m }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Molecule -->
+                <div class="form-group">
+                  <label for="pop-molecule" class="form-label">
+                    Molecule <span class="required-star">*</span>
+                  </label>
+                  <input
+                    id="pop-molecule"
+                    type="text"
+                    name="molecule"
+                    class="form-input"
+                    [class.input-error]="submitted && !form.molecule?.trim()"
+                    placeholder="e.g. Iohexol"
+                    [(ngModel)]="form.molecule"
+                    required />
+                  <span class="error-msg" *ngIf="submitted && !form.molecule?.trim()">
+                    Molecule is required
+                  </span>
+                </div>
+
+                <!-- Product Name -->
+                <div class="form-group">
+                  <label for="pop-product-name" class="form-label">
+                    Product Name <span class="required-star">*</span>
+                  </label>
+                  <input
+                    id="pop-product-name"
+                    type="text"
+                    name="productName"
+                    class="form-input"
+                    [class.input-error]="submitted && !form.productName?.trim()"
+                    placeholder="e.g. Iohexol solution for injection"
+                    [(ngModel)]="form.productName"
+                    required />
+                  <span class="error-msg" *ngIf="submitted && !form.productName?.trim()">
+                    Product Name is required
+                  </span>
+                </div>
+
+                <!-- Dosage Form -->
+                <div class="form-group">
+                  <label for="pop-dosage-form" class="form-label">Dosage Form</label>
+                  <input
+                    id="pop-dosage-form"
+                    type="text"
+                    name="dosageForm"
+                    class="form-input"
+                    placeholder="e.g. Solution for Injection"
+                    [(ngModel)]="form.dosageForm" />
+                </div>
+              </div>
+
+              <!-- Column 2 -->
+              <div class="column-group">
+                <!-- Strength -->
+                <div class="form-group">
+                  <label for="pop-strength" class="form-label">Strength</label>
+                  <input
+                    id="pop-strength"
+                    type="text"
+                    name="strength"
+                    class="form-input"
+                    placeholder="e.g. 300 mgI/mL & 350 mg I/ml"
+                    [(ngModel)]="form.strength" />
+                </div>
+
+                <!-- Fill Volume -->
+                <div class="form-group">
+                  <label for="pop-fill-volume" class="form-label">Fill Volume</label>
+                  <input
+                    id="pop-fill-volume"
+                    type="text"
+                    name="fillVolume"
+                    class="form-input"
+                    placeholder="e.g. 50 mL, 100ml"
+                    [(ngModel)]="form.fillVolume" />
+                </div>
+
+                <!-- Type of Pack -->
+                <div class="form-group">
+                  <label for="pop-type-pack" class="form-label">Type of Pack</label>
+                  <input
+                    id="pop-type-pack"
+                    type="text"
+                    name="typeOfPack"
+                    class="form-input"
+                    placeholder="e.g. Mono Vial"
+                    [(ngModel)]="form.typeOfPack" />
+                </div>
+
+                <!-- Brand Name -->
+                <div class="form-group">
+                  <label for="pop-brand-name" class="form-label">Brand Name</label>
+                  <input
+                    id="pop-brand-name"
+                    type="text"
+                    name="brandName"
+                    class="form-input"
+                    placeholder="e.g. Jodascan"
+                    [(ngModel)]="form.brandName" />
+                </div>
+
+                <!-- API Holder -->
+                <div class="form-group">
+                  <label for="pop-api-holder" class="form-label">API Holder</label>
+                  <input
+                    id="pop-api-holder"
+                    type="text"
+                    name="apiHolder"
+                    class="form-input"
+                    placeholder="e.g. XYZ"
+                    [(ngModel)]="form.apiHolder" />
+                </div>
+
+                <!-- Client -->
+                <div class="form-group">
+                  <label for="pop-client" class="form-label">Client</label>
+                  <input
+                    id="pop-client"
+                    type="text"
+                    name="client"
+                    class="form-input"
+                    placeholder="e.g. Apollo"
+                    [(ngModel)]="form.client" />
+                </div>
+
+                <!-- RA Responsible -->
+                <div class="form-group">
+                  <label for="pop-ra-resp" class="form-label">RA Responsible</label>
+                  <input
+                    id="pop-ra-resp"
+                    type="text"
+                    name="raResponsible"
+                    class="form-input"
+                    placeholder="e.g. Venkat"
+                    [(ngModel)]="form.raResponsible" />
+                </div>
+
+                <!-- BD Responsible -->
+                <div class="form-group">
+                  <label for="pop-bd-resp" class="form-label">BD Responsible</label>
+                  <input
+                    id="pop-bd-resp"
+                    type="text"
+                    name="bdResponsible"
+                    class="form-input"
+                    placeholder="e.g. Ushir"
+                    [(ngModel)]="form.bdResponsible" />
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- TAB 2: SUBMISSION -->
+          @if (activeTab() === 'submission') {
+            <div class="two-columns-layout">
+              <!-- Column 1 -->
+              <div class="column-group">
+                <!-- Business Agreement Status -->
+                <div class="form-group">
+                  <label for="pop-biz-agreement" class="form-label">Business Agreement Status</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-biz-agreement"
+                      name="businessAgreementStatus"
+                      class="form-input form-select"
+                      [(ngModel)]="form.businessAgreementStatus">
+                      @for (s of agreementStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Distribution Agreement -->
+                <div class="form-group">
+                  <label for="pop-dist-agreement" class="form-label">Distribution Agreement</label>
+                  <input
+                    id="pop-dist-agreement"
+                    type="text"
+                    name="distributionAgreement"
+                    class="form-input"
+                    placeholder="e.g. Available / Signed"
+                    [(ngModel)]="form.distributionAgreement" />
+                </div>
+
+                <!-- Quality Technical Agreement -->
+                <div class="form-group">
+                  <label for="pop-qta" class="form-label">Quality Technical Agreement</label>
+                  <input
+                    id="pop-qta"
+                    type="text"
+                    name="qualityTechnicalAgreement"
+                    class="form-input"
+                    placeholder="e.g. Signed / Approved"
+                    [(ngModel)]="form.qualityTechnicalAgreement" />
+                </div>
+
+                <!-- MA Fee -->
+                <div class="form-group">
+                  <label for="pop-ma-fee" class="form-label">MA Fee</label>
+                  <input
+                    id="pop-ma-fee"
+                    type="text"
+                    name="maFee"
+                    class="form-input"
+                    placeholder="e.g. 350000 Euro"
+                    [(ngModel)]="form.maFee" />
+                </div>
+
+                <!-- MA Fee Payment Date -->
+                <div class="form-group">
+                  <label for="pop-ma-fee-date" class="form-label">MA Fee Payment Date</label>
+                  <input
+                    id="pop-ma-fee-date"
+                    type="text"
+                    name="maFeePaymentDate"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.maFeePaymentDate" />
+                </div>
+
+                <!-- MA Holder -->
+                <div class="form-group">
+                  <label for="pop-ma-holder" class="form-label">MA Holder</label>
+                  <input
+                    id="pop-ma-holder"
+                    type="text"
+                    name="maHolder"
+                    class="form-input"
+                    placeholder="e.g. Apollo"
+                    [(ngModel)]="form.maHolder" />
+                </div>
+
+                <!-- Submission Date to Client -->
+                <div class="form-group">
+                  <label for="pop-sub-client-date" class="form-label">Submission Date to Client</label>
+                  <input
+                    id="pop-sub-client-date"
+                    type="text"
+                    name="submissionDateToClient"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.submissionDateToClient" />
+                </div>
+
+                <!-- Client RFI Date -->
+                <div class="form-group">
+                  <label for="pop-client-rfi-date" class="form-label">Client RFI Date</label>
+                  <input
+                    id="pop-client-rfi-date"
+                    type="text"
+                    name="clientRfiDate"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.clientRfiDate" />
+                </div>
+              </div>
+
+              <!-- Column 2 -->
+              <div class="column-group">
+                <!-- Client RFI Status -->
+                <div class="form-group">
+                  <label for="pop-client-rfi-status" class="form-label">Client RFI Status</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-client-rfi-status"
+                      name="clientRfiStatus"
+                      class="form-input form-select"
+                      [(ngModel)]="form.clientRfiStatus">
+                      <option value="">Select Status</option>
+                      @for (s of clientRfiStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Submission Date to MOH -->
+                <div class="form-group">
+                  <label for="pop-sub-moh-date" class="form-label">Submission Date to MOH</label>
+                  <input
+                    id="pop-sub-moh-date"
+                    type="text"
+                    name="submissionDateToMoh"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.submissionDateToMoh" />
+                </div>
+
+                <!-- MOH RFI 1 Date -->
+                <div class="form-group">
+                  <label for="pop-moh-rfi1-date" class="form-label">MOH RFI 1 Date</label>
+                  <input
+                    id="pop-moh-rfi1-date"
+                    type="text"
+                    name="mohRfi1Date"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.mohRfi1Date" />
+                </div>
+
+                <!-- MOH RFI 1 Status -->
+                <div class="form-group">
+                  <label for="pop-moh-rfi1-status" class="form-label">MOH RFI 1 Status</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-moh-rfi1-status"
+                      name="mohRfi1Status"
+                      class="form-input form-select"
+                      [(ngModel)]="form.mohRfi1Status">
+                      <option value="">Select Status</option>
+                      @for (s of mohRfiStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- MOH RFI 2 Date -->
+                <div class="form-group">
+                  <label for="pop-moh-rfi2-date" class="form-label">MOH RFI 2 Date</label>
+                  <input
+                    id="pop-moh-rfi2-date"
+                    type="text"
+                    name="mohRfi2Date"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.mohRfi2Date" />
+                </div>
+
+                <!-- MOH RFI 2 Status -->
+                <div class="form-group">
+                  <label for="pop-moh-rfi2-status" class="form-label">MOH RFI 2 Status</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-moh-rfi2-status"
+                      name="mohRfi2Status"
+                      class="form-input form-select"
+                      [(ngModel)]="form.mohRfi2Status">
+                      <option value="">Select Status</option>
+                      @for (s of mohRfiStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Submission to MOH Year -->
+                <div class="form-group">
+                  <label for="pop-sub-moh-year" class="form-label">Submission to MOH Year</label>
+                  <input
+                    id="pop-sub-moh-year"
+                    type="text"
+                    name="submissionToMohYear"
+                    class="form-input"
+                    placeholder="e.g. 2025"
+                    [(ngModel)]="form.submissionToMohYear" />
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- TAB 3: APPROVAL -->
+          @if (activeTab() === 'approval') {
+            <div class="two-columns-layout">
+              <!-- Column 1 -->
+              <div class="column-group">
+                <!-- Registration Status -->
+                <div class="form-group">
+                  <label for="pop-reg-status" class="form-label">Registration Status</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-reg-status"
+                      name="registrationStatus"
+                      class="form-input form-select"
+                      [(ngModel)]="form.registrationStatus">
+                      <option value="">Select Status</option>
+                      @for (s of registrationStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Registration Number -->
+                <div class="form-group">
+                  <label for="pop-reg-number" class="form-label">Registration Number</label>
+                  <input
+                    id="pop-reg-number"
+                    type="text"
+                    name="registrationNumber"
+                    class="form-input"
+                    placeholder="e.g. APL12345"
+                    [(ngModel)]="form.registrationNumber" />
+                </div>
+
+                <!-- Shelf Life -->
+                <div class="form-group">
+                  <label for="pop-shelf-life" class="form-label">Shelf Life</label>
+                  <input
+                    id="pop-shelf-life"
+                    type="text"
+                    name="shelfLife"
+                    class="form-input"
+                    placeholder="e.g. 48 M"
+                    [(ngModel)]="form.shelfLife" />
+                </div>
+
+                <!-- Approval Date -->
+                <div class="form-group">
+                  <label for="pop-approval-date" class="form-label">Approval Date</label>
+                  <input
+                    id="pop-approval-date"
+                    type="text"
+                    name="approvalDate"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.approvalDate" />
+                </div>
+
+                <!-- Approval Year -->
+                <div class="form-group">
+                  <label for="pop-approval-year" class="form-label">Approval Year</label>
+                  <input
+                    id="pop-approval-year"
+                    type="text"
+                    name="approvalYear"
+                    class="form-input"
+                    placeholder="e.g. 2026"
+                    [(ngModel)]="form.approvalYear" />
+                </div>
+
+                <!-- Registration Validity -->
+                <div class="form-group">
+                  <label for="pop-reg-validity" class="form-label">Registration Validity</label>
+                  <input
+                    id="pop-reg-validity"
+                    type="text"
+                    name="registrationValidity"
+                    class="form-input"
+                    placeholder="e.g. 5 years"
+                    [(ngModel)]="form.registrationValidity" />
+                </div>
+
+                <!-- Renewal Submission Date -->
+                <div class="form-group">
+                  <label for="pop-renew-sub-date" class="form-label">Renewal Submission Date</label>
+                  <input
+                    id="pop-renew-sub-date"
+                    type="text"
+                    name="renewalSubDate"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.renewalSubDate" />
+                </div>
+
+                <!-- Renewal Date -->
+                <div class="form-group">
+                  <label for="pop-renew-date" class="form-label">Renewal Date</label>
+                  <input
+                    id="pop-renew-date"
+                    type="text"
+                    name="renewalDate"
+                    class="form-input"
+                    placeholder="MM-DD-YY"
+                    [(ngModel)]="form.renewalDate" />
+                </div>
+              </div>
+
+              <!-- Column 2 -->
+              <div class="column-group">
+                <!-- Renewal Status -->
+                <div class="form-group">
+                  <label for="pop-renew-status" class="form-label">Renewal Status</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-renew-status"
+                      name="renewalStatus"
+                      class="form-input form-select"
+                      [(ngModel)]="form.renewalStatus">
+                      <option value="">Select Status</option>
+                      @for (s of renewalStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Expected Approval Timeline -->
+                <div class="form-group">
+                  <label for="pop-appr-timeline" class="form-label">Expected Approval Timeline</label>
+                  <input
+                    id="pop-appr-timeline"
+                    type="text"
+                    name="expectedApprovalTimeline"
+                    class="form-input"
+                    placeholder="e.g. 6 Months"
+                    [(ngModel)]="form.expectedApprovalTimeline" />
+                </div>
+
+                <!-- Variation -->
+                <div class="form-group">
+                  <label for="pop-variation" class="form-label">Variation</label>
+                  <input
+                    id="pop-variation"
+                    type="text"
+                    name="variation"
+                    class="form-input"
+                    placeholder="e.g. API addition, Change in Pack"
+                    [(ngModel)]="form.variation" />
+                </div>
+
+                <!-- Remarks -->
+                <div class="form-group">
+                  <label for="pop-remarks" class="form-label">Remarks</label>
+                  <input
+                    id="pop-remarks"
+                    type="text"
+                    name="remarks"
+                    class="form-input"
+                    placeholder="e.g. all variations are approved"
+                    [(ngModel)]="form.remarks" />
+                </div>
+
+                <!-- Commercial Status -->
+                <div class="form-group">
+                  <label for="pop-commercial-status" class="form-label">Commercial Status</label>
+                  <div class="select-wrapper">
+                    <select
+                      id="pop-commercial-status"
+                      name="commercialStatus"
+                      class="form-input form-select"
+                      [(ngModel)]="form.commercialStatus">
+                      <option value="">Select Status</option>
+                      @for (s of commercialStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Artwork Versions -->
+                <div class="form-group">
+                  <label for="pop-artworks" class="form-label">Artwork Versions</label>
+                  <input
+                    id="pop-artworks"
+                    type="text"
+                    name="artWorksVersions"
+                    class="form-input"
+                    placeholder="e.g. 3"
+                    [(ngModel)]="form.artWorksVersions" />
+                </div>
+
+                <!-- RA Commitments -->
+                <div class="form-group">
+                  <label for="pop-ra-commitments" class="form-label">RA Commitments</label>
+                  <input
+                    id="pop-ra-commitments"
+                    type="text"
+                    name="raCommitments"
+                    class="form-input"
+                    placeholder="e.g. API Alt. Source"
+                    [(ngModel)]="form.raCommitments" />
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Footer (exact match with eb-pop) -->
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="onClose()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-save" id="btn-save-ra-submission">
+          {{ submissionData ? 'Update Submission' : 'Save Submission' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

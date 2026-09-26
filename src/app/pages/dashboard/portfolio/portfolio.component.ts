@@ -69,6 +69,62 @@ export class PortfolioComponent {
     return list;
   });
 
+  // Sorting State
+  readonly sortColumn = signal<string>('');
+  readonly sortDirection = signal<'asc' | 'desc' | ''>('');
+
+  readonly columns: { key: keyof MoleculeRecord; label: string; align: 'left' | 'center' }[] = [
+    { key: 'molecule', label: 'Molecule', align: 'left' },
+    { key: 'submittedCountries', label: 'Submitted Countries', align: 'center' },
+    { key: 'notSubmittedCountries', label: 'Not Submitted Countries', align: 'center' },
+    { key: 'products', label: 'Products', align: 'center' },
+    { key: 'variantsSku', label: 'Variants (SKU)', align: 'center' },
+    { key: 'submissions', label: 'Submissions', align: 'center' },
+    { key: 'rejections', label: 'Rejections', align: 'center' },
+    { key: 'overdueActivity', label: 'Overdue Activity', align: 'center' },
+    { key: 'blackout', label: 'Blackout', align: 'center' },
+    { key: 'healthy', label: 'Healthy', align: 'center' },
+  ];
+
+  onSort(colKey: string): void {
+    if (this.sortColumn() === colKey) {
+      if (this.sortDirection() === 'asc') {
+        this.sortDirection.set('desc');
+      } else if (this.sortDirection() === 'desc') {
+        this.sortDirection.set('');
+        this.sortColumn.set('');
+      } else {
+        this.sortDirection.set('asc');
+      }
+    } else {
+      this.sortColumn.set(colKey);
+      this.sortDirection.set('asc');
+    }
+  }
+
+  readonly sortedRecords = computed(() => {
+    let list = [...this.filteredRecords()];
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      list.sort((a, b) => {
+        const valA = (a as unknown as Record<string, unknown>)[col];
+        const valB = (b as unknown as Record<string, unknown>)[col];
+        if (valA === valB) return 0;
+        if (valA === null || valA === undefined || valA === '') return 1;
+        if (valB === null || valB === undefined || valB === '') return -1;
+        let comp = 0;
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          comp = valA - valB;
+        } else {
+          comp = String(valA).localeCompare(String(valB));
+        }
+        return dir === 'asc' ? comp : -comp;
+      });
+    }
+    return list;
+  });
+
   // Summary Metrics
   readonly metricMolecules = computed(() => this.filteredRecords().length);
   readonly metricProducts = signal<number>(14);
@@ -77,13 +133,13 @@ export class PortfolioComponent {
 
   // Pagination Computations
   readonly totalPages = computed(() => {
-    const count = this.filteredRecords().length;
+    const count = this.sortedRecords().length;
     const size = this.pageSize();
     return Math.max(1, Math.ceil(count / size));
   });
 
   readonly paginatedRecords = computed(() => {
-    const list = this.filteredRecords();
+    const list = this.sortedRecords();
     const size = this.pageSize();
     const page = Math.min(this.currentPage(), this.totalPages());
     const start = (page - 1) * size;

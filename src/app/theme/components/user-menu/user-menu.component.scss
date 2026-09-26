@@ -23,10 +23,10 @@
         width: 38px;
         height: 38px;
         border-radius: 50%;
-        background-color: var(--primary-tint-accent, rgba(30, 58, 95, 0.12));
+        background-color: var(--table-header-bg, #e5f0fc) !important;
         color: var(--primary-color, #1E3A5F);
         font-weight: 700;
-        font-size: 15px;
+        font-size: var(--font-size-base, 15px);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -41,14 +41,14 @@
         text-align: left;
 
         .user-name {
-            font-size: 15px;
+            font-size: var(--font-size-base, 15px);
             font-weight: 700;
             color: #0f172a;
             line-height: 1.25;
         }
 
         .user-role {
-            font-size: 15px;
+            font-size: var(--font-size-base, 15px);
             color: #64748b;
             line-height: 1.25;
             margin-top: 1px;
@@ -78,7 +78,7 @@
             background-color: var(--primary-tint-accent, rgba(30, 58, 95, 0.12));
             color: var(--primary-color, #1E3A5F);
             font-weight: 700;
-            font-size: 15px;
+            font-size: var(--font-size-base, 15px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -90,13 +90,13 @@
             flex-direction: column;
 
             .name {
-                font-size: 15px;
+                font-size: var(--font-size-base, 15px);
                 font-weight: 700;
                 color: #0f172a;
             }
 
             .email {
-                font-size: 15px;
+                font-size: var(--font-size-base, 15px);
                 color: #64748b;
                 margin-top: 2px;
             }
@@ -104,7 +104,7 @@
             .role-badge {
                 display: inline-block;
                 margin-top: 4px;
-                font-size: 15px;
+                font-size: var(--font-size-base, 15px);
                 font-weight: 600;
                 color: var(--primary-color, #1E3A5F);
                 background-color: var(--primary-tint-accent, rgba(30, 58, 95, 0.08));
@@ -123,7 +123,7 @@
 
     .mat-mdc-menu-item {
         height: 42px;
-        font-size: 15px;
+        font-size: var(--font-size-base, 15px);
         color: #334155;
 
         .mat-icon {

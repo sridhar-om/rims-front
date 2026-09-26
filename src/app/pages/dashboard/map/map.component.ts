@@ -4,6 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { GridScrollerComponent } from '../../shared/grid-scroller/grid-scroller.component';
+import { PaginatorComponent } from '../../shared/paginator/paginator.component';
 import { DashboardComponent } from '../dashboard.component';
 
 export interface MapSubmissionRecord {
@@ -33,7 +35,15 @@ export interface MapCountryMarker {
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule, NgxChartsModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    NgxChartsModule,
+    GridScrollerComponent,
+    PaginatorComponent,
+  ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
@@ -45,6 +55,10 @@ export class MapComponent {
   readonly metricFilings = signal<number>(154);
   readonly metricApprovals = signal<number>(92);
   readonly metricDeclined = signal<number>(16);
+
+  // Pagination signals
+  readonly pageSize = signal<number>(10);
+  readonly currentPage = signal<number>(1);
 
   // Status Legend & color definitions
   readonly legendStatuses = [
@@ -221,6 +235,95 @@ export class MapComponent {
     return list;
   });
 
+  // Columns definition for sorting and headers
+  readonly columns: { key: keyof MapSubmissionRecord; label: string }[] = [
+    { key: 'recordId', label: 'Record ID' },
+    { key: 'molecule', label: 'Molecule' },
+    { key: 'product', label: 'Product' },
+    { key: 'country', label: 'Country' },
+    { key: 'region', label: 'Region' },
+    { key: 'regulatoryContext', label: 'Regulatory Context' },
+    { key: 'stage', label: 'Stage' },
+    { key: 'status', label: 'Status' },
+    { key: 'submittedOn', label: 'Submitted On' },
+    { key: 'decisionOn', label: 'Decision On' },
+    { key: 'valueUsd', label: 'Value (USD)' },
+  ];
+
+  // Sorting signals
+  readonly sortColumn = signal<string>('');
+  readonly sortDirection = signal<'asc' | 'desc' | ''>('');
+
+  onSort(colKey: string): void {
+    if (this.sortColumn() === colKey) {
+      if (this.sortDirection() === 'asc') {
+        this.sortDirection.set('desc');
+      } else if (this.sortDirection() === 'desc') {
+        this.sortDirection.set('');
+        this.sortColumn.set('');
+      } else {
+        this.sortDirection.set('asc');
+      }
+    } else {
+      this.sortColumn.set(colKey);
+      this.sortDirection.set('asc');
+    }
+  }
+
+  readonly sortedRecords = computed(() => {
+    let list = [...this.filteredRecords()];
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      list.sort((a, b) => {
+        const valA = (a as unknown as Record<string, unknown>)[col];
+        const valB = (b as unknown as Record<string, unknown>)[col];
+        if (valA === valB) return 0;
+        if (valA === null || valA === undefined || valA === '') return 1;
+        if (valB === null || valB === undefined || valB === '') return -1;
+
+        if (col === 'valueUsd') {
+          const numA = this.parseUsdValue(String(valA));
+          const numB = this.parseUsdValue(String(valB));
+          return dir === 'asc' ? numA - numB : numB - numA;
+        }
+
+        let comp = 0;
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          comp = valA - valB;
+        } else {
+          comp = String(valA).localeCompare(String(valB));
+        }
+        return dir === 'asc' ? comp : -comp;
+      });
+    }
+    return list;
+  });
+
+  private parseUsdValue(val: string): number {
+    if (!val || val === '—') return 0;
+    const clean = val.replace('$', '').trim();
+    if (clean.endsWith('M')) {
+      return parseFloat(clean) * 1_000_000;
+    }
+    if (clean.endsWith('K')) {
+      return parseFloat(clean) * 1_000;
+    }
+    return parseFloat(clean) || 0;
+  }
+
+  // Paginated records based on currentPage and pageSize
+  readonly paginatedRecords = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.sortedRecords().slice(start, start + this.pageSize());
+  });
+
+  // Page size change handler
+  onPageSizeChange(newSize: number): void {
+    this.pageSize.set(newSize);
+    this.currentPage.set(1);
+  }
+
   // Country selection toggle
   selectCountry(countryName: string): void {
     if (this.selectedCountry() === countryName) {
@@ -228,6 +331,7 @@ export class MapComponent {
     } else {
       this.selectedCountry.set(countryName);
     }
+    this.currentPage.set(1);
   }
 
   // Status filter toggle
@@ -237,11 +341,13 @@ export class MapComponent {
     } else {
       this.selectedStatus.set(status);
     }
+    this.currentPage.set(1);
   }
 
   // Clear all local map filters
   clearMapFilters(): void {
     this.selectedCountry.set(null);
     this.selectedStatus.set(null);
+    this.currentPage.set(1);
   }
 }

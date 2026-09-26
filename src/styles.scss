@@ -72,6 +72,18 @@ $font-size: 15px;
   z-index: 2000 !important;
 }
 
+/* Modal backdrop stacking fix: When a modal is open, ensure the backdrop covers the entire viewport including sidenav, so the left nav is not left highlighted */
+mat-sidenav-container:has(.modal-backdrop),
+body:has(.modal-backdrop) {
+  .app-sidenav,
+  mat-sidenav {
+    z-index: 0 !important;
+  }
+  mat-sidenav-content {
+    z-index: 1200 !important;
+  }
+}
+
 /* Ensure Roboto font is used across form controls */
 input, textarea, select, button {
   font-family: 'Roboto', sans-serif;

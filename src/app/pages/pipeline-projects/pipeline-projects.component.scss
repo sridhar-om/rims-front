@@ -308,7 +308,7 @@
   border: 1px solid #e2e8f0;
 
   thead th {
-    padding: 12px 14px;
+    padding: 8px;
     font-size: var(--font-size-base, 15px);
     font-weight: 700;
     color: var(--table-header-color, #12426d) !important;
@@ -336,7 +336,7 @@
   }
 
   tbody td {
-    padding: 13px 18px;
+    padding: 8px;
     font-size: var(--font-size-base, 15px);
     color: #334155;
     border: 1px solid #e2e8f0;

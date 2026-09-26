@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { GridScrollerComponent } from '../../shared/grid-scroller/grid-scroller.component';
+import { PaginatorComponent } from '../../shared/paginator/paginator.component';
 import { DashboardComponent } from '../dashboard.component';
 
 export interface AlertItem {
@@ -19,12 +21,32 @@ export interface AlertItem {
 @Component({
   selector: 'app-alerts',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, GridScrollerComponent, PaginatorComponent],
   templateUrl: './alerts.component.html',
   styleUrl: './alerts.component.scss',
 })
 export class AlertsComponent {
   private readonly dashboard = inject(DashboardComponent, { optional: true });
+
+  // Sorting & pagination signals
+  readonly sortColumn = signal<string>('');
+  readonly sortDirection = signal<'asc' | 'desc' | ''>('');
+  readonly pageSize = signal<number>(10);
+  readonly currentPage = signal<number>(1);
+
+  // Column definitions
+  readonly columns: { key: keyof AlertItem; label: string }[] = [
+    { key: 'id', label: 'Alert ID' },
+    { key: 'category', label: 'Category' },
+    { key: 'severity', label: 'Severity' },
+    { key: 'message', label: 'Message' },
+    { key: 'molecule', label: 'Molecule' },
+    { key: 'product', label: 'Product' },
+    { key: 'country', label: 'Country' },
+    { key: 'regulatoryContext', label: 'Regulatory Context' },
+    { key: 'raisedOn', label: 'Raised On' },
+    { key: 'status', label: 'Status' },
+  ];
 
   readonly alerts = signal<AlertItem[]>([
     {
@@ -123,6 +145,90 @@ export class AlertsComponent {
       raisedOn: '05 Sept 2026',
       status: 'Overdue',
     },
+    {
+      id: 'ALR-709',
+      category: 'Submission',
+      severity: 'Medium',
+      message: 'Stability data query from Health Canada pending response',
+      molecule: 'Enoxaparin Sodium',
+      product: 'Enoxalow 60 mg',
+      country: 'Canada',
+      regulatoryContext: 'Highly Regulated',
+      raisedOn: '01 Sept 2026',
+      status: 'In Progress',
+    },
+    {
+      id: 'ALR-710',
+      category: 'Filing',
+      severity: 'Low',
+      message: 'Administrative certificate renewal required before year end',
+      molecule: 'Atorvastatin',
+      product: 'Atorvex 20 mg',
+      country: 'Brazil',
+      regulatoryContext: 'Semi Regulated',
+      raisedOn: '25 Aug 2026',
+      status: 'Open',
+    },
+    {
+      id: 'ALR-711',
+      category: 'Approved',
+      severity: 'Low',
+      message: 'Marketing authorization issued - upload final artwork',
+      molecule: 'Ceftriaxone',
+      product: 'Ceftrimax 500 mg',
+      country: 'United Kingdom',
+      regulatoryContext: 'Highly Regulated',
+      raisedOn: '18 Aug 2026',
+      status: 'Closed',
+    },
+    {
+      id: 'ALR-712',
+      category: 'Declined',
+      severity: 'High',
+      message: 'DMF review fee rejected - payment reconciliation overdue',
+      molecule: 'Iohexol',
+      product: 'Iolexa Inject 300',
+      country: 'Egypt',
+      regulatoryContext: 'Lightly Regulated',
+      raisedOn: '11 Aug 2026',
+      status: 'Escalated',
+    },
+    {
+      id: 'ALR-713',
+      category: 'Submission',
+      severity: 'High',
+      message: 'Clinical expert statement missing in Module 2 submission',
+      molecule: 'Ondansetron',
+      product: 'Onsetra 8 mg',
+      country: 'Germany',
+      regulatoryContext: 'Highly Regulated',
+      raisedOn: '04 Aug 2026',
+      status: 'Open',
+    },
+    {
+      id: 'ALR-714',
+      category: 'Filing',
+      severity: 'Medium',
+      message: 'Batch manufacturing records request from Saudi FDA',
+      molecule: 'Metformin HCl',
+      product: 'Metfosure 1000 XR',
+      country: 'Saudi Arabia',
+      regulatoryContext: 'Semi Regulated',
+      raisedOn: '29 Jul 2026',
+      status: 'In Progress',
+    },
+    {
+      id: 'ALR-715',
+      category: 'Approved',
+      severity: 'Low',
+      message: 'Post-approval variation commitment completed',
+      molecule: 'Enoxaparin Sodium',
+      product: 'Enoxalow 80 mg',
+      country: 'United States',
+      regulatoryContext: 'Highly Regulated',
+      raisedOn: '21 Jul 2026',
+      status: 'Closed',
+    },
   ]);
 
   // Reactive filtering using global dashboard filters
@@ -139,6 +245,58 @@ export class AlertsComponent {
     }
     return list;
   });
+
+  // Column sorting handler
+  onSort(colKey: string): void {
+    if (this.sortColumn() === colKey) {
+      if (this.sortDirection() === 'asc') {
+        this.sortDirection.set('desc');
+      } else if (this.sortDirection() === 'desc') {
+        this.sortDirection.set('');
+        this.sortColumn.set('');
+      } else {
+        this.sortDirection.set('asc');
+      }
+    } else {
+      this.sortColumn.set(colKey);
+      this.sortDirection.set('asc');
+    }
+  }
+
+  // Sorted alerts
+  readonly sortedAlerts = computed(() => {
+    let list = [...this.filteredAlerts()];
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      list.sort((a, b) => {
+        const valA = (a as unknown as Record<string, unknown>)[col];
+        const valB = (b as unknown as Record<string, unknown>)[col];
+        if (valA === valB) return 0;
+        if (valA === null || valA === undefined || valA === '') return 1;
+        if (valB === null || valB === undefined || valB === '') return -1;
+        let comp = 0;
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          comp = valA - valB;
+        } else {
+          comp = String(valA).localeCompare(String(valB));
+        }
+        return dir === 'asc' ? comp : -comp;
+      });
+    }
+    return list;
+  });
+
+  // Paginated alerts
+  readonly paginatedAlerts = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.sortedAlerts().slice(start, start + this.pageSize());
+  });
+
+  onPageSizeChange(newSize: number): void {
+    this.pageSize.set(newSize);
+    this.currentPage.set(1);
+  }
 
   // Category counts matching screenshot
   readonly submissionCount = computed(() => this.alerts().filter((a) => a.category === 'Submission').length);

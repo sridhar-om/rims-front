@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { GridScrollerComponent } from '../../shared/grid-scroller/grid-scroller.component';
+import { PaginatorComponent } from '../../shared/paginator/paginator.component';
 import { DashboardComponent } from '../dashboard.component';
 
 export interface PipelineRecord {
@@ -25,12 +28,38 @@ export interface LegendItem {
 @Component({
   selector: 'app-pipeline',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    NgxChartsModule,
+    GridScrollerComponent,
+    PaginatorComponent,
+  ],
   templateUrl: './pipeline.component.html',
   styleUrl: './pipeline.component.scss',
 })
 export class PipelineComponent {
   private readonly dashboard = inject(DashboardComponent, { optional: true });
+
+  // Sorting & pagination signals
+  readonly sortColumn = signal<string>('');
+  readonly sortDirection = signal<'asc' | 'desc' | ''>('');
+  readonly pageSize = signal<number>(10);
+  readonly currentPage = signal<number>(1);
+
+  // Columns definition
+  readonly columns: { key: keyof PipelineRecord; label: string }[] = [
+    { key: 'recordId', label: 'Record ID' },
+    { key: 'molecule', label: 'Molecule' },
+    { key: 'product', label: 'Product' },
+    { key: 'country', label: 'Country' },
+    { key: 'region', label: 'Region' },
+    { key: 'regulatoryContext', label: 'Regulatory Context' },
+    { key: 'stage', label: 'Stage' },
+    { key: 'status', label: 'Status' },
+    { key: 'submittedOn', label: 'Submitted On' },
+  ];
 
   // Funnel Metrics
   readonly funnelStages = [
@@ -93,6 +122,21 @@ export class PipelineComponent {
       default:
         return this.countryLegend;
     }
+  });
+
+  // Animated NGX Charts Data & Custom Colors
+  readonly chartData = computed(() => {
+    return this.activeLegend().map((item) => ({
+      name: item.label,
+      value: item.count,
+    }));
+  });
+
+  readonly chartCustomColors = computed(() => {
+    return this.activeLegend().map((item) => ({
+      name: item.label,
+      value: item.color,
+    }));
   });
 
   // SVG Donut Slices Computed
@@ -232,7 +276,60 @@ export class PipelineComponent {
     return list;
   });
 
+  // Column sorting handler
+  onSort(colKey: string): void {
+    if (this.sortColumn() === colKey) {
+      if (this.sortDirection() === 'asc') {
+        this.sortDirection.set('desc');
+      } else if (this.sortDirection() === 'desc') {
+        this.sortDirection.set('');
+        this.sortColumn.set('');
+      } else {
+        this.sortDirection.set('asc');
+      }
+    } else {
+      this.sortColumn.set(colKey);
+      this.sortDirection.set('asc');
+    }
+  }
+
+  // Sorted records
+  readonly sortedRecords = computed(() => {
+    let list = [...this.filteredRecords()];
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      list.sort((a, b) => {
+        const valA = (a as unknown as Record<string, unknown>)[col];
+        const valB = (b as unknown as Record<string, unknown>)[col];
+        if (valA === valB) return 0;
+        if (valA === null || valA === undefined || valA === '') return 1;
+        if (valB === null || valB === undefined || valB === '') return -1;
+        let comp = 0;
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          comp = valA - valB;
+        } else {
+          comp = String(valA).localeCompare(String(valB));
+        }
+        return dir === 'asc' ? comp : -comp;
+      });
+    }
+    return list;
+  });
+
+  // Paginated records
+  readonly paginatedRecords = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.sortedRecords().slice(start, start + this.pageSize());
+  });
+
+  onPageSizeChange(newSize: number): void {
+    this.pageSize.set(newSize);
+    this.currentPage.set(1);
+  }
+
   setBreakdown(view: 'Country' | 'Region' | 'Regulatory Context'): void {
     this.selectedBreakdown.set(view);
+    this.currentPage.set(1);
   }
 }

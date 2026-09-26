@@ -1,1 +1,719 @@
-<p>ra-submission-status works!</p>
+<div class="roles-page">
+
+  <!-- Top Action Buttons (Aligned with page header) -->
+  <div class="header-action-wrapper">
+    <div class="action-buttons-group">
+      <!-- Grid Columns Button (Freeze Panes Dialog) -->
+      <button
+        type="button"
+        class="btn-grid-columns"
+        (click)="openFreezePanes()"
+        id="btn-grid-columns">
+        <mat-icon class="grid-icon">grid_on</mat-icon>
+        <span class="btn-text">Grid Columns</span>
+      </button>
+
+      <!-- Filter Toggle Button -->
+      <button
+        type="button"
+        class="btn-filter"
+        (click)="toggleFilter()"
+        [class.active]="filterToggle() || activeFilterCount() > 0"
+        id="btn-filter">
+        <mat-icon class="filter-icon">tune</mat-icon>
+        <span class="btn-text">Filter</span>
+      </button>
+
+      <!-- Add Primary Button -->
+      <button
+        type="button"
+        class="btn-primary-action btn-add-primary"
+        (click)="openAddModal()"
+        id="btn-add-ra-submission">
+        <span class="plus-sign">+</span>
+        <span class="btn-text">Add Submission</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Collapsible Filter Panel (White background) -->
+  @if (filterToggle()) {
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-inputs">
+          <!-- Keyword -->
+          <div class="filter-item">
+            <label class="filter-label">Keyword:</label>
+            <input
+              type="text"
+              class="form-control-filter"
+              placeholder="Search Molecule, Product, Client, Dossier ID..."
+              [ngModel]="filterKeyword()"
+              (ngModelChange)="filterKeyword.set($event); currentPage.set(1)"
+            />
+          </div>
+
+          <!-- Region -->
+          <div class="filter-item">
+            <label class="filter-label">Region:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterRegion()"
+                (ngModelChange)="filterRegion.set($event); currentPage.set(1)">
+                <option value="All">Select Region</option>
+                @for (r of regionsList(); track r) {
+                  <option [value]="r">{{ r }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Market -->
+          <div class="filter-item">
+            <label class="filter-label">Market:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterMarket()"
+                (ngModelChange)="filterMarket.set($event); currentPage.set(1)">
+                <option value="All">Select Market</option>
+                @for (m of marketsList(); track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Dossier Type -->
+          <div class="filter-item">
+            <label class="filter-label">Dossier Type:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterDossierType()"
+                (ngModelChange)="filterDossierType.set($event); currentPage.set(1)">
+                <option value="All">Select Dossier Type</option>
+                @for (d of dossierTypesList(); track d) {
+                  <option [value]="d">{{ d }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Registration Status -->
+          <div class="filter-item">
+            <label class="filter-label">Registration Status:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterRegistrationStatus()"
+                (ngModelChange)="filterRegistrationStatus.set($event); currentPage.set(1)">
+                <option value="All">Select Status</option>
+                @for (rs of registrationStatusesList(); track rs) {
+                  <option [value]="rs">{{ rs }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Client RFI Status -->
+          <div class="filter-item">
+            <label class="filter-label">Client RFI Status:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterClientRfiStatus()"
+                (ngModelChange)="filterClientRfiStatus.set($event); currentPage.set(1)">
+                <option value="All">Select Status</option>
+                @for (s of clientRfiStatusesList(); track s) {
+                  <option [value]="s">{{ s }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Commercial Status -->
+          <div class="filter-item">
+            <label class="filter-label">Commercial Status:</label>
+            <div class="select-wrapper">
+              <select
+                class="form-control-filter form-select-filter"
+                [ngModel]="filterCommercialStatus()"
+                (ngModelChange)="filterCommercialStatus.set($event); currentPage.set(1)">
+                <option value="All">Select Status</option>
+                @for (c of commercialStatusesList(); track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clear Button -->
+        <div class="filter-actions">
+          <button type="button" class="btn-clear" (click)="clearFilters()">
+            <mat-icon class="btn-action-icon">settings_backup_restore</mat-icon>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Main Grid Card -->
+  <div class="roles-card">
+    <div #tableContainer class="table-responsive-wrapper">
+      <table class="roles-table">
+        <!-- Table Header (Unified single row with sort icons) -->
+        <thead>
+          <tr class="table-header-row">
+            @for (col of selectedColumns(); track col.key) {
+              @if (col.visible !== false) {
+                <th
+                  [class]="getColumnCssClass(col.key)"
+                  [class.text-center]="col.key === 'serial' || col.key === 'clientRfiStatus' || col.key === 'commercialStatus' || col.key === 'raCommitmentsStatus' || col.key === 'businessAgreementStatus' || col.key === 'mohRfi1Status' || col.key === 'mohRfi2Status' || col.key === 'registrationStatus' || col.key === 'submissionToMohYear' || col.key === 'approvalYear' || col.key === 'shelfLife' || col.key === 'registrationValidity' || col.key === 'artWorksVersions' || col.key === 'renewalStatus' || col.key === 'expectedApprovalTimeline'"
+                  [class.sticky-col]="isColumnFrozen(col.key)"
+                  [style.left.px]="isColumnFrozen(col.key) ? getStickyLeft(col.key) : null">
+                  <div class="th-content-wrapper">
+                    @if (col.key === 'actions') {
+                      <div class="th-title-row th-actions-title">
+                        <span class="th-label">ACTIONS</span>
+                      </div>
+                    } @else {
+                      <div
+                        class="th-title-row"
+                        [class.active-sort]="sortColumn() === col.key"
+                        (click)="onSort(col.key)"
+                        >
+                        <span class="th-label">{{ col.label | uppercase }}</span>
+                        <mat-icon class="sort-icon" [class.sorted]="sortColumn() === col.key">
+                          @if (sortColumn() === col.key) {
+                            @if (sortDirection() === 'asc') {
+                              arrow_upward
+                            } @else if (sortDirection() === 'desc') {
+                              arrow_downward
+                            } @else {
+                              unfold_more
+                            }
+                          } @else {
+                            unfold_more
+                          }
+                        </mat-icon>
+                      </div>
+                    }
+                  </div>
+                </th>
+              }
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (row of paginatedRecords(); track row.id) {
+            <tr class="role-row">
+              @for (col of selectedColumns(); track col.key) {
+                @if (col.visible !== false) {
+                  @switch (col.key) {
+                    @case ('actions') {
+                      <td
+                        class="col-actions"
+                        [class.sticky-col]="isColumnFrozen('actions')"
+                        [style.left.px]="isColumnFrozen('actions') ? getStickyLeft('actions') : null">
+                        <div class="actions-cell-wrapper">
+                          <button
+                            type="button"
+                            class="action-edit-btn"
+                            (click)="openEditModal(row)"
+                            matTooltip="Edit">
+                            <mat-icon class="edit-icon">edit</mat-icon>
+                          </button>
+                          <button
+                            type="button"
+                            class="action-delete-btn"
+                            (click)="openDeleteModal(row)"
+                            matTooltip="Delete">
+                            <mat-icon class="delete-icon">delete</mat-icon>
+                          </button>
+                        </div>
+                      </td>
+                    }
+                    @case ('serial') {
+                      <td
+                        class="td-serial text-center font-semibold"
+                        [class.sticky-col]="isColumnFrozen('serial')"
+                        [style.left.px]="isColumnFrozen('serial') ? getStickyLeft('serial') : null">
+                        {{ row.serial }}
+                      </td>
+                    }
+                    @case ('dossierId') {
+                      <td
+                        class="td-dossier font-semibold"
+                        [class.sticky-col]="isColumnFrozen('dossierId')"
+                        [style.left.px]="isColumnFrozen('dossierId') ? getStickyLeft('dossierId') : null">
+                        {{ row.dossierId }}
+                      </td>
+                    }
+                    @case ('region') {
+                      <td
+                        class="td-region"
+                        [class.sticky-col]="isColumnFrozen('region')"
+                        [style.left.px]="isColumnFrozen('region') ? getStickyLeft('region') : null">
+                        {{ row.region }}
+                      </td>
+                    }
+                    @case ('dossierType') {
+                      <td
+                        class="td-dossier-type"
+                        [class.sticky-col]="isColumnFrozen('dossierType')"
+                        [style.left.px]="isColumnFrozen('dossierType') ? getStickyLeft('dossierType') : null">
+                        {{ row.dossierType }}
+                      </td>
+                    }
+                    @case ('country') {
+                      <td
+                        class="td-country"
+                        [class.sticky-col]="isColumnFrozen('country')"
+                        [style.left.px]="isColumnFrozen('country') ? getStickyLeft('country') : null">
+                        {{ row.country }}
+                      </td>
+                    }
+                    @case ('market') {
+                      <td
+                        class="td-market"
+                        [class.sticky-col]="isColumnFrozen('market')"
+                        [style.left.px]="isColumnFrozen('market') ? getStickyLeft('market') : null">
+                        {{ row.market }}
+                      </td>
+                    }
+                    @case ('molecule') {
+                      <td
+                        class="td-molecule font-semibold"
+                        [class.sticky-col]="isColumnFrozen('molecule')"
+                        [style.left.px]="isColumnFrozen('molecule') ? getStickyLeft('molecule') : null">
+                        {{ row.molecule }}
+                      </td>
+                    }
+                    @case ('productName') {
+                      <td
+                        class="td-product font-semibold"
+                        [class.sticky-col]="isColumnFrozen('productName')"
+                        [style.left.px]="isColumnFrozen('productName') ? getStickyLeft('productName') : null">
+                        {{ row.productName }}
+                      </td>
+                    }
+                    @case ('dosageForm') {
+                      <td
+                        class="td-dosage"
+                        [class.sticky-col]="isColumnFrozen('dosageForm')"
+                        [style.left.px]="isColumnFrozen('dosageForm') ? getStickyLeft('dosageForm') : null">
+                        {{ row.dosageForm }}
+                      </td>
+                    }
+                    @case ('strength') {
+                      <td
+                        class="td-strength"
+                        [class.sticky-col]="isColumnFrozen('strength')"
+                        [style.left.px]="isColumnFrozen('strength') ? getStickyLeft('strength') : null">
+                        {{ row.strength }}
+                      </td>
+                    }
+                    @case ('fillVolume') {
+                      <td
+                        class="td-fill"
+                        [class.sticky-col]="isColumnFrozen('fillVolume')"
+                        [style.left.px]="isColumnFrozen('fillVolume') ? getStickyLeft('fillVolume') : null">
+                        {{ row.fillVolume || '-' }}
+                      </td>
+                    }
+                    @case ('typeOfPack') {
+                      <td
+                        class="td-pack"
+                        [class.sticky-col]="isColumnFrozen('typeOfPack')"
+                        [style.left.px]="isColumnFrozen('typeOfPack') ? getStickyLeft('typeOfPack') : null">
+                        {{ row.typeOfPack }}
+                      </td>
+                    }
+                    @case ('brandName') {
+                      <td
+                        class="td-brand"
+                        [class.sticky-col]="isColumnFrozen('brandName')"
+                        [style.left.px]="isColumnFrozen('brandName') ? getStickyLeft('brandName') : null">
+                        {{ row.brandName }}
+                      </td>
+                    }
+                    @case ('apiHolder') {
+                      <td
+                        class="td-api-holder"
+                        [class.sticky-col]="isColumnFrozen('apiHolder')"
+                        [style.left.px]="isColumnFrozen('apiHolder') ? getStickyLeft('apiHolder') : null">
+                        {{ row.apiHolder }}
+                      </td>
+                    }
+                    @case ('client') {
+                      <td
+                        class="td-client"
+                        [class.sticky-col]="isColumnFrozen('client')"
+                        [style.left.px]="isColumnFrozen('client') ? getStickyLeft('client') : null">
+                        {{ row.client }}
+                      </td>
+                    }
+                    @case ('raResponsible') {
+                      <td
+                        class="td-ra-resp"
+                        [class.sticky-col]="isColumnFrozen('raResponsible')"
+                        [style.left.px]="isColumnFrozen('raResponsible') ? getStickyLeft('raResponsible') : null">
+                        {{ row.raResponsible }}
+                      </td>
+                    }
+                    @case ('bdResponsible') {
+                      <td
+                        class="td-bd-resp"
+                        [class.sticky-col]="isColumnFrozen('bdResponsible')"
+                        [style.left.px]="isColumnFrozen('bdResponsible') ? getStickyLeft('bdResponsible') : null">
+                        {{ row.bdResponsible }}
+                      </td>
+                    }
+                    @case ('businessAgreementStatus') {
+                      <td
+                        class="td-biz-status text-center"
+                        [class.sticky-col]="isColumnFrozen('businessAgreementStatus')"
+                        [style.left.px]="isColumnFrozen('businessAgreementStatus') ? getStickyLeft('businessAgreementStatus') : null">
+                        <span class="status-badge" [ngClass]="getStatusBadgeClass(row.businessAgreementStatus)">
+                          {{ row.businessAgreementStatus || '-' }}
+                        </span>
+                      </td>
+                    }
+                    @case ('distributionAgreement') {
+                      <td
+                        class="td-dist-agree"
+                        [class.sticky-col]="isColumnFrozen('distributionAgreement')"
+                        [style.left.px]="isColumnFrozen('distributionAgreement') ? getStickyLeft('distributionAgreement') : null">
+                        {{ row.distributionAgreement || '-' }}
+                      </td>
+                    }
+                    @case ('qualityTechnicalAgreement') {
+                      <td
+                        class="td-qta"
+                        [class.sticky-col]="isColumnFrozen('qualityTechnicalAgreement')"
+                        [style.left.px]="isColumnFrozen('qualityTechnicalAgreement') ? getStickyLeft('qualityTechnicalAgreement') : null">
+                        {{ row.qualityTechnicalAgreement || '-' }}
+                      </td>
+                    }
+                    @case ('maFee') {
+                      <td
+                        class="td-ma-fee"
+                        [class.sticky-col]="isColumnFrozen('maFee')"
+                        [style.left.px]="isColumnFrozen('maFee') ? getStickyLeft('maFee') : null">
+                        {{ row.maFee || '-' }}
+                      </td>
+                    }
+                    @case ('maFeePaymentDate') {
+                      <td
+                        class="td-ma-fee-date"
+                        [class.sticky-col]="isColumnFrozen('maFeePaymentDate')"
+                        [style.left.px]="isColumnFrozen('maFeePaymentDate') ? getStickyLeft('maFeePaymentDate') : null">
+                        {{ row.maFeePaymentDate || '-' }}
+                      </td>
+                    }
+                    @case ('maHolder') {
+                      <td
+                        class="td-ma-holder"
+                        [class.sticky-col]="isColumnFrozen('maHolder')"
+                        [style.left.px]="isColumnFrozen('maHolder') ? getStickyLeft('maHolder') : null">
+                        {{ row.maHolder || '-' }}
+                      </td>
+                    }
+                    @case ('submissionDateToClient') {
+                      <td
+                        class="td-sub-date"
+                        [class.sticky-col]="isColumnFrozen('submissionDateToClient')"
+                        [style.left.px]="isColumnFrozen('submissionDateToClient') ? getStickyLeft('submissionDateToClient') : null">
+                        {{ row.submissionDateToClient || '-' }}
+                      </td>
+                    }
+                    @case ('clientRfiDate') {
+                      <td
+                        class="td-rfi-date"
+                        [class.sticky-col]="isColumnFrozen('clientRfiDate')"
+                        [style.left.px]="isColumnFrozen('clientRfiDate') ? getStickyLeft('clientRfiDate') : null">
+                        {{ row.clientRfiDate || '-' }}
+                      </td>
+                    }
+                    @case ('clientRfiStatus') {
+                      <td
+                        class="td-rfi-status text-center"
+                        [class.sticky-col]="isColumnFrozen('clientRfiStatus')"
+                        [style.left.px]="isColumnFrozen('clientRfiStatus') ? getStickyLeft('clientRfiStatus') : null">
+                        @if (row.clientRfiStatus) {
+                          <span class="status-badge" [ngClass]="getStatusBadgeClass(row.clientRfiStatus)">
+                            {{ row.clientRfiStatus }}
+                          </span>
+                        } @else {
+                          -
+                        }
+                      </td>
+                    }
+                    @case ('submissionDateToMoh') {
+                      <td
+                        class="td-sub-moh-date"
+                        [class.sticky-col]="isColumnFrozen('submissionDateToMoh')"
+                        [style.left.px]="isColumnFrozen('submissionDateToMoh') ? getStickyLeft('submissionDateToMoh') : null">
+                        {{ row.submissionDateToMoh || '-' }}
+                      </td>
+                    }
+                    @case ('mohRfi1Date') {
+                      <td
+                        class="td-moh-rfi1-date"
+                        [class.sticky-col]="isColumnFrozen('mohRfi1Date')"
+                        [style.left.px]="isColumnFrozen('mohRfi1Date') ? getStickyLeft('mohRfi1Date') : null">
+                        {{ row.mohRfi1Date || '-' }}
+                      </td>
+                    }
+                    @case ('mohRfi1Status') {
+                      <td
+                        class="td-moh-rfi1-status text-center"
+                        [class.sticky-col]="isColumnFrozen('mohRfi1Status')"
+                        [style.left.px]="isColumnFrozen('mohRfi1Status') ? getStickyLeft('mohRfi1Status') : null">
+                        @if (row.mohRfi1Status) {
+                          <span class="status-badge" [ngClass]="getStatusBadgeClass(row.mohRfi1Status)">
+                            {{ row.mohRfi1Status }}
+                          </span>
+                        } @else {
+                          -
+                        }
+                      </td>
+                    }
+                    @case ('mohRfi2Date') {
+                      <td
+                        class="td-moh-rfi2-date"
+                        [class.sticky-col]="isColumnFrozen('mohRfi2Date')"
+                        [style.left.px]="isColumnFrozen('mohRfi2Date') ? getStickyLeft('mohRfi2Date') : null">
+                        {{ row.mohRfi2Date || '-' }}
+                      </td>
+                    }
+                    @case ('mohRfi2Status') {
+                      <td
+                        class="td-moh-rfi2-status text-center"
+                        [class.sticky-col]="isColumnFrozen('mohRfi2Status')"
+                        [style.left.px]="isColumnFrozen('mohRfi2Status') ? getStickyLeft('mohRfi2Status') : null">
+                        @if (row.mohRfi2Status) {
+                          <span class="status-badge" [ngClass]="getStatusBadgeClass(row.mohRfi2Status)">
+                            {{ row.mohRfi2Status }}
+                          </span>
+                        } @else {
+                          -
+                        }
+                      </td>
+                    }
+                    @case ('submissionToMohYear') {
+                      <td
+                        class="td-sub-moh-year text-center"
+                        [class.sticky-col]="isColumnFrozen('submissionToMohYear')"
+                        [style.left.px]="isColumnFrozen('submissionToMohYear') ? getStickyLeft('submissionToMohYear') : null">
+                        {{ row.submissionToMohYear || '-' }}
+                      </td>
+                    }
+                    @case ('registrationStatus') {
+                      <td
+                        class="td-reg-status text-center"
+                        [class.sticky-col]="isColumnFrozen('registrationStatus')"
+                        [style.left.px]="isColumnFrozen('registrationStatus') ? getStickyLeft('registrationStatus') : null">
+                        @if (row.registrationStatus) {
+                          <span class="status-badge" [ngClass]="getStatusBadgeClass(row.registrationStatus)">
+                            {{ row.registrationStatus }}
+                          </span>
+                        } @else {
+                          -
+                        }
+                      </td>
+                    }
+                    @case ('registrationNumber') {
+                      <td
+                        class="td-reg-num font-semibold"
+                        [class.sticky-col]="isColumnFrozen('registrationNumber')"
+                        [style.left.px]="isColumnFrozen('registrationNumber') ? getStickyLeft('registrationNumber') : null">
+                        {{ row.registrationNumber || '-' }}
+                      </td>
+                    }
+                    @case ('shelfLife') {
+                      <td
+                        class="td-shelf-life text-center"
+                        [class.sticky-col]="isColumnFrozen('shelfLife')"
+                        [style.left.px]="isColumnFrozen('shelfLife') ? getStickyLeft('shelfLife') : null">
+                        {{ row.shelfLife || '-' }}
+                      </td>
+                    }
+                    @case ('approvalDate') {
+                      <td
+                        class="td-appr-date"
+                        [class.sticky-col]="isColumnFrozen('approvalDate')"
+                        [style.left.px]="isColumnFrozen('approvalDate') ? getStickyLeft('approvalDate') : null">
+                        {{ row.approvalDate || '-' }}
+                      </td>
+                    }
+                    @case ('approvalYear') {
+                      <td
+                        class="td-appr-year text-center"
+                        [class.sticky-col]="isColumnFrozen('approvalYear')"
+                        [style.left.px]="isColumnFrozen('approvalYear') ? getStickyLeft('approvalYear') : null">
+                        {{ row.approvalYear || '-' }}
+                      </td>
+                    }
+                    @case ('registrationValidity') {
+                      <td
+                        class="td-reg-val text-center"
+                        [class.sticky-col]="isColumnFrozen('registrationValidity')"
+                        [style.left.px]="isColumnFrozen('registrationValidity') ? getStickyLeft('registrationValidity') : null">
+                        {{ row.registrationValidity || '-' }}
+                      </td>
+                    }
+                    @case ('renewalSubDate') {
+                      <td
+                        class="td-renew-sub-date"
+                        [class.sticky-col]="isColumnFrozen('renewalSubDate')"
+                        [style.left.px]="isColumnFrozen('renewalSubDate') ? getStickyLeft('renewalSubDate') : null">
+                        {{ row.renewalSubDate || '-' }}
+                      </td>
+                    }
+                    @case ('renewalDate') {
+                      <td
+                        class="td-renew-date"
+                        [class.sticky-col]="isColumnFrozen('renewalDate')"
+                        [style.left.px]="isColumnFrozen('renewalDate') ? getStickyLeft('renewalDate') : null">
+                        {{ row.renewalDate || '-' }}
+                      </td>
+                    }
+                    @case ('renewalStatus') {
+                      <td
+                        class="td-renew-status text-center"
+                        [class.sticky-col]="isColumnFrozen('renewalStatus')"
+                        [style.left.px]="isColumnFrozen('renewalStatus') ? getStickyLeft('renewalStatus') : null">
+                        @if (row.renewalStatus) {
+                          <span class="status-badge" [ngClass]="getStatusBadgeClass(row.renewalStatus)">
+                            {{ row.renewalStatus }}
+                          </span>
+                        } @else {
+                          -
+                        }
+                      </td>
+                    }
+                    @case ('expectedApprovalTimeline') {
+                      <td
+                        class="td-appr-timeline text-center"
+                        [class.sticky-col]="isColumnFrozen('expectedApprovalTimeline')"
+                        [style.left.px]="isColumnFrozen('expectedApprovalTimeline') ? getStickyLeft('expectedApprovalTimeline') : null">
+                        {{ row.expectedApprovalTimeline || '-' }}
+                      </td>
+                    }
+                    @case ('variation') {
+                      <td
+                        class="td-variation"
+                        [class.sticky-col]="isColumnFrozen('variation')"
+                        [style.left.px]="isColumnFrozen('variation') ? getStickyLeft('variation') : null">
+                        {{ row.variation || '-' }}
+                      </td>
+                    }
+                    @case ('remarks') {
+                      <td
+                        class="td-remarks"
+                        [class.sticky-col]="isColumnFrozen('remarks')"
+                        [style.left.px]="isColumnFrozen('remarks') ? getStickyLeft('remarks') : null">
+                        {{ row.remarks || '-' }}
+                      </td>
+                    }
+                    @case ('commercialStatus') {
+                      <td
+                        class="td-comm-status text-center"
+                        [class.sticky-col]="isColumnFrozen('commercialStatus')"
+                        [style.left.px]="isColumnFrozen('commercialStatus') ? getStickyLeft('commercialStatus') : null">
+                        @if (row.commercialStatus) {
+                          <span class="status-badge" [ngClass]="getStatusBadgeClass(row.commercialStatus)">
+                            {{ row.commercialStatus }}
+                          </span>
+                        } @else {
+                          -
+                        }
+                      </td>
+                    }
+                    @case ('artWorksVersions') {
+                      <td
+                        class="td-artworks text-center"
+                        [class.sticky-col]="isColumnFrozen('artWorksVersions')"
+                        [style.left.px]="isColumnFrozen('artWorksVersions') ? getStickyLeft('artWorksVersions') : null">
+                        {{ row.artWorksVersions || '-' }}
+                      </td>
+                    }
+                    @case ('raCommitments') {
+                      <td
+                        class="td-ra-commitments"
+                        [class.sticky-col]="isColumnFrozen('raCommitments')"
+                        [style.left.px]="isColumnFrozen('raCommitments') ? getStickyLeft('raCommitments') : null">
+                        {{ row.raCommitments || '-' }}
+                      </td>
+                    }
+                    @case ('raCommitmentsStatus') {
+                      <td
+                        class="td-ra-commit-status text-center"
+                        [class.sticky-col]="isColumnFrozen('raCommitmentsStatus')"
+                        [style.left.px]="isColumnFrozen('raCommitmentsStatus') ? getStickyLeft('raCommitmentsStatus') : null">
+                        @if (row.raCommitmentsStatus) {
+                          <span class="status-badge" [ngClass]="getStatusBadgeClass(row.raCommitmentsStatus)">
+                            {{ row.raCommitmentsStatus }}
+                          </span>
+                        } @else {
+                          -
+                        }
+                      </td>
+                    }
+                  }
+                }
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="visibleColumnCount()" class="text-center py-4 text-muted">
+                No RA submission records found
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Reusable Bottom Pagination Bar -->
+    <app-paginator
+      [totalItems]="filteredRecords().length"
+      [pageSize]="pageSize()"
+      [currentPage]="currentPage()"
+      (pageChange)="currentPage.set($event)"
+      (pageSizeChange)="onPageSizeChange($event)">
+    </app-paginator>
+  </div>
+
+  <!-- Reusable Floating Grid Scroller for smooth horizontal table scrolling -->
+  <app-grid-scroller [target]="tableContainer"></app-grid-scroller>
+
+  <!-- Add / Edit RA Submission Modal Pop -->
+  @if (showSubmissionModal()) {
+    <app-ra-submission-pop
+      [submissionData]="selectedSubmissionForEdit()"
+      [nextSerial]="recordsList().length + 1"
+      (save)="onSaveSubmission($event)"
+      (close)="closeSubmissionModal()">
+    </app-ra-submission-pop>
+  }
+
+  <!-- Delete Confirmation Modal Pop -->
+  @if (showDeleteModal() && targetDeleteRecord()) {
+    <app-delete-pop
+      title="Delete RA Submission"
+      itemType="RA submission"
+      [itemName]="targetDeleteRecord()?.productName || targetDeleteRecord()?.dossierId"
+      subMessage="This submission record will be permanently deleted from the regulatory affairs tracking grid."
+      (confirm)="executeDelete()"
+      (cancel)="closeDeleteModal()">
+    </app-delete-pop>
+  }
+
+</div>

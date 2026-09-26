@@ -8,8 +8,7 @@
         type="button"
         class="btn-grid-columns"
         (click)="openFreezePanes()"
-        id="btn-grid-columns"
-        matTooltip="Manage Grid Columns & Freeze Panes">
+        id="btn-grid-columns">
         <mat-icon class="grid-icon">grid_on</mat-icon>
         <span class="btn-text">Grid Columns</span>
       </button>
@@ -138,8 +137,7 @@
                       <div
                         class="th-title-row"
                         [class.active-sort]="sortColumn() === col.key"
-                        (click)="onSort(col.key)"
-                        [matTooltip]="'Click to sort by ' + col.label">
+                        (click)="onSort(col.key)">
                         <span class="th-label">{{ col.label | uppercase }}</span>
                         <mat-icon class="sort-icon" [class.sorted]="sortColumn() === col.key">
                           @if (sortColumn() === col.key) {
@@ -229,8 +227,6 @@
                     @case ('productName') {
                       <td
                         class="td-product"
-                        [matTooltip]="row.productName"
-                        matTooltipPosition="above"
                         [class.sticky-col]="isColumnFrozen('productName')"
                         [style.left.px]="isColumnFrozen('productName') ? getStickyLeft('productName') : null">
                         {{ row.productName }}
@@ -305,8 +301,6 @@
                     @case ('remarks') {
                       <td
                         class="td-remarks"
-                        [matTooltip]="row.remarks || '-'"
-                        matTooltipPosition="above"
                         [class.sticky-col]="isColumnFrozen('remarks')"
                         [style.left.px]="isColumnFrozen('remarks') ? getStickyLeft('remarks') : null">
                         {{ row.remarks || '-' }}

@@ -22,24 +22,40 @@
 
   <!-- Main Alerts Grid Card -->
   <div class="alerts-table-card">
-    <div class="table-responsive-wrapper">
+    <div #tableContainer class="table-responsive-wrapper">
       <table class="alerts-table">
         <thead>
           <tr>
-            <th class="th-alert-id">Alert ID</th>
-            <th>Category</th>
-            <th>Severity</th>
-            <th class="th-message">Message</th>
-            <th>Molecule</th>
-            <th>Product</th>
-            <th>Country</th>
-            <th>Regulatory Context</th>
-            <th>Raised On</th>
-            <th>Status</th>
+            @for (col of columns; track col.key) {
+              <th
+                [class]="'th-' + col.key"
+                (click)="onSort(col.key)">
+                <div class="th-content-wrapper">
+                  <div
+                    class="th-title-row"
+                    [class.active-sort]="sortColumn() === col.key">
+                    <span class="th-label">{{ col.label }}</span>
+                    <mat-icon class="sort-icon" [class.sorted]="sortColumn() === col.key">
+                      @if (sortColumn() === col.key) {
+                        @if (sortDirection() === 'asc') {
+                          arrow_upward
+                        } @else if (sortDirection() === 'desc') {
+                          arrow_downward
+                        } @else {
+                          unfold_more
+                        }
+                      } @else {
+                        unfold_more
+                      }
+                    </mat-icon>
+                  </div>
+                </div>
+              </th>
+            }
           </tr>
         </thead>
         <tbody>
-          @for (alert of filteredAlerts(); track alert.id) {
+          @for (alert of paginatedAlerts(); track alert.id) {
             <tr>
               <td class="td-alert-id">{{ alert.id }}</td>
               <td>{{ alert.category }}</td>
@@ -62,12 +78,24 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="10" class="text-center py-4 text-muted">No alerts found</td>
+              <td [attr.colspan]="columns.length" class="text-center py-4 text-muted">No alerts found</td>
             </tr>
           }
         </tbody>
       </table>
     </div>
+
+    <!-- Reusable Bottom Pagination Bar -->
+    <app-paginator
+      [totalItems]="sortedAlerts().length"
+      [pageSize]="pageSize()"
+      [currentPage]="currentPage()"
+      (pageChange)="currentPage.set($event)"
+      (pageSizeChange)="onPageSizeChange($event)">
+    </app-paginator>
   </div>
+
+  <!-- Reusable Floating Grid Scroller for smooth horizontal table scrolling -->
+  <app-grid-scroller [target]="tableContainer"></app-grid-scroller>
 
 </div>

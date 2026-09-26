@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { GridScrollerComponent } from '../../shared/grid-scroller/grid-scroller.component';
+import { PaginatorComponent } from '../../shared/paginator/paginator.component';
 
 export interface ProductItem {
   id: string;
@@ -52,12 +54,42 @@ export interface ProductRecord {
 @Component({
   selector: 'app-tree',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    GridScrollerComponent,
+    PaginatorComponent,
+  ],
   templateUrl: './tree.component.html',
   styleUrl: './tree.component.scss',
 })
-export class TreeComponent {
+export class TreeComponent implements OnInit {
   selectedContext = signal<SelectedProductContext | null>(null);
+
+  // Sorting signals
+  readonly sortColumn = signal<string>('');
+  readonly sortDirection = signal<'asc' | 'desc' | ''>('');
+
+  // Pagination signals
+  readonly pageSize = signal<number>(10);
+  readonly currentPage = signal<number>(1);
+
+  // Table columns definition
+  readonly columns: { key: keyof ProductRecord; label: string }[] = [
+    { key: 'recordId', label: 'Record ID' },
+    { key: 'molecule', label: 'Molecule' },
+    { key: 'product', label: 'Product' },
+    { key: 'country', label: 'Country' },
+    { key: 'region', label: 'Region' },
+    { key: 'regulatoryContext', label: 'Regulatory Context' },
+    { key: 'stage', label: 'Stage' },
+    { key: 'status', label: 'Status' },
+    { key: 'submittedOn', label: 'Submitted On' },
+    { key: 'decisionOn', label: 'Decision On' },
+    { key: 'valueUsd', label: 'Value (USD)' },
+  ];
 
   readonly treeData = signal<CountryNode[]>([
     {
@@ -373,6 +405,73 @@ export class TreeComponent {
     ];
   });
 
+  ngOnInit(): void {
+    // Land by default on "Enoxalow 40 mg" under "Enoxaparin Sodium" in "United States"
+    const usCountry = this.treeData()[0];
+    const enoxMolecule = usCountry?.molecules[0];
+    const enoxalowProduct = enoxMolecule?.products[0];
+    if (usCountry && enoxMolecule && enoxalowProduct) {
+      this.selectedContext.set({
+        country: usCountry,
+        molecule: enoxMolecule,
+        product: enoxalowProduct,
+      });
+    }
+  }
+
+  // Column sorting handler
+  onSort(colKey: string): void {
+    if (this.sortColumn() === colKey) {
+      if (this.sortDirection() === 'asc') {
+        this.sortDirection.set('desc');
+      } else if (this.sortDirection() === 'desc') {
+        this.sortDirection.set('');
+        this.sortColumn.set('');
+      } else {
+        this.sortDirection.set('asc');
+      }
+    } else {
+      this.sortColumn.set(colKey);
+      this.sortDirection.set('asc');
+    }
+  }
+
+  // Sorted records based on sortColumn and sortDirection
+  readonly sortedRecords = computed(() => {
+    let list = [...this.productRecords()];
+    const col = this.sortColumn();
+    const dir = this.sortDirection();
+    if (col && dir) {
+      list.sort((a, b) => {
+        const valA = (a as unknown as Record<string, unknown>)[col];
+        const valB = (b as unknown as Record<string, unknown>)[col];
+        if (valA === valB) return 0;
+        if (valA === null || valA === undefined || valA === '') return 1;
+        if (valB === null || valB === undefined || valB === '') return -1;
+        let comp = 0;
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          comp = valA - valB;
+        } else {
+          comp = String(valA).localeCompare(String(valB));
+        }
+        return dir === 'asc' ? comp : -comp;
+      });
+    }
+    return list;
+  });
+
+  // Paginated records based on currentPage and pageSize
+  readonly paginatedRecords = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.sortedRecords().slice(start, start + this.pageSize());
+  });
+
+  // Page size change handler
+  onPageSizeChange(newSize: number): void {
+    this.pageSize.set(newSize);
+    this.currentPage.set(1);
+  }
+
   toggleCountry(country: CountryNode, event: MouseEvent): void {
     event.stopPropagation();
     country.expanded = !country.expanded;
@@ -385,9 +484,11 @@ export class TreeComponent {
 
   selectProduct(product: ProductItem, molecule: MoleculeItem, country: CountryNode): void {
     this.selectedContext.set({ product, molecule, country });
+    this.currentPage.set(1);
   }
 
   clearSelection(): void {
     this.selectedContext.set(null);
+    this.currentPage.set(1);
   }
 }
