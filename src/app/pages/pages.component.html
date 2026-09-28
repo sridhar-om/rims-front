@@ -1,39 +1,33 @@
-<mat-sidenav-container [dir]="settings.rtl ? 'rtl' : 'ltr'">
+<header class="app-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a class="brand-link" routerLink="/" aria-label="RIMS Home">
+                <img src="rims-logo-favicon.jpeg" alt="RIMS Icon" class="brand-logo-icon" />
+                <img src="img/logo/rims-logo-text.png" alt="RIMS" class="brand-logo-text" />
+            </a>
+        </div>
+
+        <!-- Right: User Profile -->
+        <div class="header-right">
+            <app-user-menu></app-user-menu>
+        </div>
+    </div>
+</header>
+
+<mat-sidenav-container [class.mini-nav]="settingsService.isNavCollapsed()" [dir]="settings.rtl ? 'rtl' : 'ltr'">
+
+    <mat-sidenav #sidenav class="app-sidenav" [class.mini]="settingsService.isNavCollapsed()" mode="side" opened>
+        <app-sidenav></app-sidenav>
+    </mat-sidenav>
+
     <mat-sidenav-content #mainSidenavContent id="main" (scroll)="onPageScroll($event)">
 
-        <mat-toolbar color="primary" class="px-2">
-            <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100">
-                <div fxLayout="row" fxLayoutAlign="center center">
-                    <a class="logo" routerLink="/">
-                        <img src="img/logo/rpm-logo.png" alt="OptionMatrix" class="app-logo">
-                    </a>
-                </div>
-
-                <div fxLayout="row" fxLayoutAlign="end center" class="navbar-actions">
-                    <button mat-icon-button class="navbar-settings-button" (click)="openSettings()">
-                        <mat-icon>settings</mat-icon>
-                    </button>
-                    <app-messages></app-messages>
-                    <app-fullscreen></app-fullscreen>
-                    <app-user-menu></app-user-menu>
-                </div>
-            </div>
-        </mat-toolbar>
-
-        <mat-toolbar id="horizontal-menu" color="primary" class="horizontal-menu px-2 transition-2">
-            <div fxLayout="row" fxLayoutAlign="center center" class="w-100">
-                <app-horizontal-menu [menuParentId]="0"></app-horizontal-menu>
-            </div>
-        </mat-toolbar>
-
-<div id="main-content" class="sidenav-content-inner transition-2" [class.full-bleed]="isFullBleed()">
-
-    @if (!isFullBleed()) {
-        <app-breadcrumb></app-breadcrumb>
-    }
-
-    <router-outlet></router-outlet>
-</div>
+        <div id="main-content" class="sidenav-content-inner transition-2" [class.full-bleed]="isFullBleed()">
+            @if (!isFullBleed()) {
+                <app-breadcrumb></app-breadcrumb>
+            }
+            <router-outlet></router-outlet>
+        </div>
 
         <div #backToTop fxLayout="row" fxLayoutAlign="center center" class="back-to-top" (click)="scrollToTop()">
             <mat-icon>arrow_upward</mat-icon>

@@ -1,0 +1,121 @@
+<div class="reports-page-container">
+
+  <!-- Action Bar: Search Input, Filter Tabs & Add Report Button -->
+  <div class="action-bar">
+    <div class="search-and-filters">
+      <!-- Search Input -->
+      <div class="search-input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search reports, scope, owner..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearch($event)" />
+        @if (searchTerm()) {
+          <button type="button" class="btn-clear-search" (click)="onSearch('')">
+            <mat-icon class="clear-icon">close</mat-icon>
+          </button>
+        }
+      </div>
+
+      <!-- Filter Tabs / Pills -->
+      <div class="filter-pills-group">
+        @for (tab of filterTabs; track tab) {
+          <button
+            type="button"
+            class="pill-tab-btn"
+            [class.active]="selectedType() === tab"
+            (click)="setTab(tab)">
+            {{ tab }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Add Report Button -->
+    <button type="button" class="btn-add-report" (click)="openAddModal()">
+      <mat-icon class="add-icon">add</mat-icon>
+      <span>Add Report</span>
+    </button>
+  </div>
+
+  <!-- Table Card Container -->
+  <div class="table-card">
+    <div class="table-responsive-wrapper">
+      <table class="reports-table">
+        <thead>
+          <tr>
+            <th class="th-report-id">Report ID</th>
+            <th>Report Name</th>
+            <th>Report Type</th>
+            <th>Scope</th>
+            <th>Period From</th>
+            <th>Period To</th>
+            <th>Frequency</th>
+            <th>Format</th>
+            <th>Owner</th>
+            <th>Last Generated</th>
+            <th class="text-right">Records</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of paginatedReports(); track row.reportId) {
+            <tr>
+              <td class="td-report-id">{{ row.reportId }}</td>
+              <td class="td-name">{{ row.reportName }}</td>
+              <td class="td-type">{{ row.reportType }}</td>
+              <td class="td-scope">{{ row.scope }}</td>
+              <td class="td-period">{{ row.periodFrom }}</td>
+              <td class="td-period">{{ row.periodTo }}</td>
+              <td class="td-freq">{{ row.frequency }}</td>
+              <td class="td-format">{{ row.format }}</td>
+              <td class="td-owner">{{ row.owner }}</td>
+              <td class="td-generated">{{ row.lastGenerated }}</td>
+              <td class="td-records text-right">{{ row.records }}</td>
+              <td class="td-status">
+                <span class="badge-status" [ngClass]="row.status.toLowerCase()">
+                  {{ row.status }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="12" class="empty-state-cell">
+                <div class="empty-state-content">
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <p class="empty-title">No reports found</p>
+                  <p class="empty-desc">Try modifying your filter tab or search keywords to view reports.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginator Footer -->
+    <div class="table-paginator-wrapper">
+      <mat-paginator
+        [length]="filteredReports().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        aria-label="Select page of reports">
+      </mat-paginator>
+    </div>
+  </div>
+
+  <!-- Add Report Modal Dialog Component -->
+  @if (isAddModalOpen()) {
+    <app-report-pop
+      [report]="newReport"
+      (save)="saveReport($event)"
+      (cancel)="closeAddModal()">
+    </app-report-pop>
+  }
+
+</div>

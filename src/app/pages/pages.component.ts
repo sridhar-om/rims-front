@@ -8,34 +8,32 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { MessagesComponent } from '../theme/components/messages/messages.component';
 import { Settings, SettingsService } from '../services/settings.service';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
-import { HorizontalMenuComponent } from '../theme/components/menu/horizontal-menu/horizontal-menu.component';
-import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.component';
+import { SidenavComponent } from '../theme/components/sidenav/sidenav.component';
 import { FullScreenComponent } from '../theme/components/fullscreen/fullscreen.component';
+import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-pages',
   imports: [
     RouterOutlet,
-    FullScreenComponent,
+    RouterLink,
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    MessagesComponent,
     FlexLayoutModule,
     UserMenuComponent,
-    HorizontalMenuComponent,
-    BreadcrumbComponent,
+    SidenavComponent,
+    BreadcrumbComponent
   ],
   templateUrl: './pages.component.html',
   styleUrl: './pages.component.scss',
@@ -45,12 +43,21 @@ export class PagesComponent implements OnInit, AfterViewInit {
   @ViewChild('backToTop') backToTop: any;
   @ViewChild('mainSidenavContent') mainSidenavContent: any;
   @ViewChild('mainContent') mainContent!: ElementRef;
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
+  public toggleNav(): void {
+    this.settingsService.toggleNavCollapse();
+  }
+
+  public toggleSidenav(): void {
+    this.toggleNav();
+  }
 
   readonly router = inject(Router);
   readonly activatedRoute = inject(ActivatedRoute); // Injected to read route data
   readonly settingsService = inject(SettingsService);
 
-  // Generic signal that listens to the router data instead of hardcoded URLs
+  // Generic signals that listen to the router data instead of hardcoded URLs
   protected readonly isFullBleed = signal(false);
 
   constructor() {
@@ -63,7 +70,7 @@ export class PagesComponent implements OnInit, AfterViewInit {
           currentRoute = currentRoute.firstChild;
         }
 
-        // Check if the leaf route has the 'fullBleed' flag set to true
+        // Check if the leaf route has the 'fullBleed' flag set
         this.isFullBleed.set(currentRoute.snapshot.data['fullBleed'] === true);
       });
   }
@@ -73,9 +80,10 @@ export class PagesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.settings.menu = 'horizontal';
-    this.settings.sidenavIsOpened = false;
-    this.settings.sidenavIsPinned = false;
+    this.settings.menu = 'vertical';
+    this.settings.menuType = 'default';
+    this.settings.sidenavIsOpened = true;
+    this.settings.sidenavIsPinned = true;
   }
 
   ngAfterViewInit(): void {

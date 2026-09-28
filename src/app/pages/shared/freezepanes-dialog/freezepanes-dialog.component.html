@@ -1,0 +1,98 @@
+<div class="freeze-dialog">
+  <!-- Dialog Header matching pipeline-pop -->
+  <div class="modal-header">
+    <h3 class="modal-title">Manage Grid Columns</h3>
+    <button type="button" class="modal-close-btn" (click)="cancel()" aria-label="Close dialog">
+      <mat-icon class="close-icon">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Dialog Body -->
+  <div class="dialog-body">
+    <p class="dialog-subtitle">Select, reorder, or freeze columns to customize your view.</p>
+
+    <div class="panels-wrapper">
+      <!-- Left Panel: Available Columns -->
+      <div class="panel left-panel">
+        <div class="panel-label">AVAILABLE COLUMNS</div>
+
+        <div class="search-box">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input
+            type="text"
+            [(ngModel)]="searchText"
+            placeholder="Search columns..."
+            class="search-input"
+          />
+        </div>
+
+        <div class="column-list">
+          <div
+            class="column-item"
+            *ngFor="let col of filteredColumns"
+            (click)="toggleColumn(col)"
+          >
+            <mat-checkbox
+              [checked]="isSelected(col)"
+              (change)="toggleColumn(col)"
+              (click)="$event.stopPropagation()"
+              color="primary"
+            >
+            </mat-checkbox>
+            <span class="col-label">{{ col.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Selected & Frozen Columns -->
+      <div class="panel right-panel">
+        <div class="panel-header-row">
+          <div class="panel-label">SELECTED ({{ selectedColumns.length }})</div>
+          <div class="freeze-control">
+            <span class="freeze-label">Freeze first:</span>
+            <select [(ngModel)]="freezeCount" class="freeze-select">
+              <option *ngFor="let opt of freezeOptions" [value]="opt">{{ opt }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Frozen zone banner -->
+        <div class="frozen-zone" *ngIf="freezeCount > 0">
+          <mat-icon class="freeze-icon">ac_unit</mat-icon>
+          <span>{{ freezeCount }} column{{ freezeCount > 1 ? 's' : '' }} frozen</span>
+        </div>
+        <div class="frozen-zone empty" *ngIf="freezeCount === 0">
+          <span>No columns are frozen</span>
+        </div>
+
+        <!-- Draggable Selected Columns -->
+        <div cdkDropList (cdkDropListDropped)="drop($event)" class="selected-list">
+          <div
+            class="selected-item"
+            *ngFor="let col of selectedColumns; let i = index"
+            cdkDrag
+            [class.is-frozen]="i < freezeCount"
+          >
+            <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
+            <span class="col-label">{{ col.label }}</span>
+            <mat-icon class="remove-btn" (click)="removeColumn(col)">close</mat-icon>
+          </div>
+
+          <div *ngIf="selectedColumns.length === 0" class="empty-selected">
+            No columns selected
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialog Footer matching pipeline-pop -->
+  <div class="modal-footer">
+    <button type="button" class="btn-cancel" (click)="cancel()">
+      Cancel
+    </button>
+    <button type="button" class="btn-save" (click)="applyChanges()">
+      Apply Changes
+    </button>
+  </div>
+</div>

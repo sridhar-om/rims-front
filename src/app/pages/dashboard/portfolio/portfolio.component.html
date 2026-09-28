@@ -1,0 +1,143 @@
+<!-- KPI Metric Summary Cards (4 Cards) -->
+<div class="kpi-cards-grid">
+  <div class="kpi-card">
+    <span class="kpi-label">Molecules in portfolio</span>
+    <span class="kpi-value">{{ metricMolecules() }}</span>
+  </div>
+  <div class="kpi-card">
+    <span class="kpi-label">Products</span>
+    <span class="kpi-value">{{ metricProducts() }}</span>
+  </div>
+  <div class="kpi-card">
+    <span class="kpi-label">Total submissions</span>
+    <span class="kpi-value">{{ metricTotalSubmissions() }}</span>
+  </div>
+  <div class="kpi-card">
+    <span class="kpi-label">Overdue activity</span>
+    <span class="kpi-value">{{ metricOverdueActivity() }}</span>
+  </div>
+</div>
+
+<!-- Floating Horizontal Scroll Buttons -->
+<app-grid-scroller [target]="tableContainer"></app-grid-scroller>
+
+<!-- Main Grid Card (Same Grid Styles) -->
+<div class="grid-card">
+  <div
+    #scrollContainer
+    #tableContainer
+    id="grid-table-container"
+    class="table-responsive-wrapper"
+    style="overflow-x: auto; scroll-behavior: smooth;"
+    (scroll)="updateScrollState()">
+    <table class="grid-table">
+      <thead>
+        <tr class="table-header-row">
+          @for (col of columns; track col.key) {
+            <th
+              [class]="col.key === 'molecule' ? 'th-molecule text-left' : (col.key === 'healthy' ? 'th-healthy text-center' : 'th-num text-center')"
+              (click)="onSort(col.key)">
+              <div class="th-content-wrapper" [class.justify-center]="col.align === 'center'">
+                <div
+                  class="th-title-row"
+                  [class.active-sort]="sortColumn() === col.key">
+                  <span class="th-label">{{ col.label }}</span>
+                  <mat-icon class="sort-icon" [class.sorted]="sortColumn() === col.key">
+                    @if (sortColumn() === col.key) {
+                      @if (sortDirection() === 'asc') {
+                        arrow_upward
+                      } @else if (sortDirection() === 'desc') {
+                        arrow_downward
+                      } @else {
+                        unfold_more
+                      }
+                    } @else {
+                      unfold_more
+                    }
+                  </mat-icon>
+                </div>
+              </div>
+            </th>
+          }
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (item of paginatedRecords(); track item.id) {
+          <tr class="grid-row">
+            <!-- Molecule Name -->
+            <td class="td-molecule text-left">
+              <span class="molecule-name">{{ item.molecule }}</span>
+            </td>
+
+            <!-- Submitted Countries -->
+            <td class="td-num text-center">{{ item.submittedCountries }}</td>
+
+            <!-- Not Submitted Countries -->
+            <td class="td-num text-center">{{ item.notSubmittedCountries }}</td>
+
+            <!-- Products -->
+            <td class="td-num text-center">{{ item.products }}</td>
+
+            <!-- Variants (SKU) -->
+            <td class="td-num text-center">{{ item.variantsSku }}</td>
+
+            <!-- Submissions -->
+            <td class="td-num text-center">{{ item.submissions }}</td>
+
+            <!-- Rejections -->
+            <td class="td-num text-center">
+              @if (item.rejections > 0) {
+                <span class="badge-rejection">{{ item.rejections }}</span>
+              } @else {
+                <span class="badge-neutral">{{ item.rejections }}</span>
+              }
+            </td>
+
+            <!-- Overdue Activity -->
+            <td class="td-num text-center">
+              @if (item.overdueActivity > 0) {
+                <span class="badge-overdue">{{ item.overdueActivity }}</span>
+              } @else {
+                <span class="badge-neutral">{{ item.overdueActivity }}</span>
+              }
+            </td>
+
+            <!-- Blackout -->
+            <td class="td-num text-center blackout-text">{{ item.blackout }}</td>
+
+            <!-- Healthy Progress Bar -->
+            <td class="td-healthy">
+              <div class="healthy-wrapper">
+                <div class="healthy-bar-track">
+                  <div
+                    class="healthy-bar-fill"
+                    [style.width.%]="item.healthy"
+                    [class.high]="item.healthy >= 85"
+                    [class.mid]="item.healthy >= 70 && item.healthy < 85"
+                    [class.low]="item.healthy < 70">
+                  </div>
+                </div>
+                <span class="healthy-percent-text">{{ item.healthy }}%</span>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="10" class="text-center py-4 text-muted">No molecules found</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Reusable Bottom Pagination Bar -->
+  <app-paginator
+    [totalItems]="sortedRecords().length"
+    [pageSize]="pageSize()"
+    [currentPage]="currentPage()"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    (pageChange)="currentPage.set($event)"
+    (pageSizeChange)="onPageSizeChange($event)">
+  </app-paginator>
+</div>

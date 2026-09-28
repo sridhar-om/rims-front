@@ -1,0 +1,224 @@
+<div class="molecule-page-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2 class="page-title">Molecule</h2>
+      <p class="page-subtitle">Manage molecule master data — codes, therapeutic areas and product associations.</p>
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <div class="search-filter-group">
+      <div class="search-input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search by code, molecule, area..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearch($event)" />
+        @if (searchTerm()) {
+          <button type="button" class="btn-clear-search" (click)="onSearch('')">
+            <mat-icon class="clear-icon">close</mat-icon>
+          </button>
+        }
+      </div>
+
+      <span class="records-counter-text">
+        {{ paginatedMolecules().length }} of {{ filteredMolecules().length }} molecules
+      </span>
+    </div>
+
+    <button type="button" class="btn-add-molecule" id="btn-add-molecule" (click)="openAddModal()">
+      <mat-icon class="add-icon">add</mat-icon>
+      <span>Add Molecule</span>
+    </button>
+  </div>
+
+  <!-- Table Card -->
+  <div class="table-card">
+    <div class="table-responsive-wrapper">
+      <table class="molecule-table">
+        <thead>
+          <tr>
+            <th class="th-code">CODE</th>
+            <th>MOLECULE</th>
+            <th>THERAPEUTIC AREA</th>
+            <th class="th-number">ACTIVE PRODUCTS</th>
+            <th class="th-status">STATUS</th>
+            <th class="th-actions">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of paginatedMolecules(); track row.code) {
+            <tr>
+              <td class="td-code">{{ row.code }}</td>
+              <td class="td-molecule">{{ row.molecule }}</td>
+              <td class="td-area">{{ row.therapeuticArea }}</td>
+              <td class="td-count">{{ row.activeProducts }}</td>
+              <td class="td-status">
+                <span class="badge-status" [ngClass]="row.status.toLowerCase()">
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="td-actions">
+                <div class="actions-group">
+                  <button
+                    type="button"
+                    class="btn-action btn-edit"
+                    [id]="'btn-edit-' + row.code"
+                    matTooltip="Edit"
+                    matTooltipPosition="above"
+                    (click)="openEditModal(row)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-action"
+                    [ngClass]="row.status === 'Active' ? 'btn-deactivate' : 'btn-activate'"
+                    [id]="'btn-toggle-' + row.code"
+                    [matTooltip]="row.status === 'Active' ? 'Deactivate' : 'Activate'"
+                    matTooltipPosition="above"
+                    (click)="toggleStatus(row)">
+                    <mat-icon>{{ row.status === 'Active' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-action btn-delete"
+                    [id]="'btn-delete-' + row.code"
+                    matTooltip="Delete"
+                    matTooltipPosition="above"
+                    (click)="openDeleteConfirm(row)">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state-cell">
+                <div class="empty-state-content">
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <p class="empty-title">No molecules found</p>
+                  <p class="empty-desc">Try modifying your search or add a new molecule.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginator -->
+    <div class="table-paginator-wrapper">
+      <mat-paginator
+        [length]="filteredMolecules().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        aria-label="Select page of molecules">
+      </mat-paginator>
+    </div>
+  </div>
+
+  <!-- Add / Edit Modal -->
+  @if (isAddModalOpen()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h3 class="modal-title">{{ editingMolecule() ? 'Edit Molecule' : 'New Molecule' }}</h3>
+            <p class="modal-subtitle">{{ editingMolecule() ? 'Update the molecule master record.' : 'Enter molecule details to add to the master list.' }}</p>
+          </div>
+          <button type="button" class="btn-close-modal" id="btn-close-modal" (click)="closeModal()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label class="form-label">Code</label>
+              <input type="text" class="form-input" id="input-mol-code" [(ngModel)]="formModel.code" placeholder="e.g. RVX-014" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Molecule Name *</label>
+              <input type="text" class="form-input" id="input-mol-name" [(ngModel)]="formModel.molecule" placeholder="e.g. Rivaxenib" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Therapeutic Area *</label>
+              <select class="form-select" id="select-mol-area" [(ngModel)]="formModel.therapeuticArea">
+                @for (area of therapeuticAreas; track area) {
+                  <option [value]="area">{{ area }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Active Products</label>
+              <input type="number" class="form-input" id="input-mol-products" [(ngModel)]="formModel.activeProducts" placeholder="0" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="select-mol-status" [(ngModel)]="formModel.status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="btn-modal-cancel" (click)="closeModal()">Cancel</button>
+          <button
+            type="button"
+            class="btn-save"
+            id="btn-modal-save"
+            [disabled]="!formModel.molecule?.trim()"
+            (click)="saveMolecule()">
+            {{ editingMolecule() ? 'Save Changes' : 'Add Molecule' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Confirm Dialog -->
+  @if (deletingMolecule()) {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal-dialog-card modal-confirm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h3 class="modal-title">Delete Molecule</h3>
+            <p class="modal-subtitle">This action cannot be undone.</p>
+          </div>
+          <button type="button" class="btn-close-modal" id="btn-close-delete-modal" (click)="cancelDelete()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="modal-body confirm-body">
+          <div class="confirm-icon-wrap">
+            <mat-icon class="confirm-icon">warning_amber</mat-icon>
+          </div>
+          <p class="confirm-text">
+            Are you sure you want to delete <strong>{{ deletingMolecule()?.molecule }}</strong> ({{ deletingMolecule()?.code }})?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="btn-cancel-delete" (click)="cancelDelete()">Cancel</button>
+          <button type="button" class="btn-delete-confirm" id="btn-confirm-delete" (click)="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

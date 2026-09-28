@@ -1,0 +1,229 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        {{ projectData ? 'Edit EB Completed Project' : 'Add EB Completed Project' }}
+      </h3>
+      <button type="button" class="modal-close-btn" (click)="onClose()" aria-label="Close dialog">
+        <mat-icon class="close-icon">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="onSave()" class="modal-form" autocomplete="off">
+      <div class="modal-body">
+        <div class="form-grid">
+          <!-- Molecule -->
+          <div class="form-group">
+            <label for="eb-molecule" class="form-label">
+              Molecule <span class="required-star">*</span>
+            </label>
+            <input
+              id="eb-molecule"
+              type="text"
+              name="molecule"
+              class="form-input"
+              [class.input-error]="submitted && !molecule.trim()"
+              placeholder="e.g. Abiraterone"
+              [(ngModel)]="molecule"
+              required
+              autofocus />
+            <span class="error-msg" *ngIf="submitted && !molecule.trim()">
+              Molecule is required
+            </span>
+          </div>
+
+          <!-- Plant Data Status -->
+          <div class="form-group">
+            <label for="eb-plant-data" class="form-label">
+              Plant Data Status
+            </label>
+            <div class="select-wrapper">
+              <select
+                id="eb-plant-data"
+                name="plantDataStatus"
+                class="form-input form-select"
+                [(ngModel)]="plantDataStatus">
+                @for (p of plantDataOptions; track p) {
+                  <option [value]="p">{{ p }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Market -->
+          <div class="form-group">
+            <label for="eb-market" class="form-label">
+              Market <span class="required-star">*</span>
+            </label>
+            <div class="select-wrapper">
+              <select
+                id="eb-market"
+                name="market"
+                class="form-input form-select"
+                [(ngModel)]="market">
+                @for (m of marketOptions; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Product Name (Full width) -->
+          <div class="form-group full-width">
+            <label for="eb-product" class="form-label">
+              Product Name <span class="required-star">*</span>
+            </label>
+            <input
+              id="eb-product"
+              type="text"
+              name="productName"
+              class="form-input"
+              [class.input-error]="submitted && !productName.trim()"
+              placeholder="e.g. Abiraterone Acetate Film Coated Tablets"
+              [(ngModel)]="productName"
+              required />
+            <span class="error-msg" *ngIf="submitted && !productName.trim()">
+              Product Name is required
+            </span>
+          </div>
+
+          <!-- Pharmacopoeia -->
+          <div class="form-group">
+            <label for="eb-pharma" class="form-label">Pharmacopoeia</label>
+            <div class="select-wrapper">
+              <select
+                id="eb-pharma"
+                name="pharmacopoeia"
+                class="form-input form-select"
+                [(ngModel)]="pharmacopoeia">
+                @for (ph of pharmacopoeiaOptions; track ph) {
+                  <option [value]="ph">{{ ph }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Dosage Form -->
+          <div class="form-group">
+            <label for="eb-dosage" class="form-label">Dosage Form</label>
+            <div class="select-wrapper">
+              <select
+                id="eb-dosage"
+                name="dosageForm"
+                class="form-input form-select"
+                [(ngModel)]="dosageForm">
+                @for (d of dosageOptions; track d) {
+                  <option [value]="d">{{ d }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Strength -->
+          <div class="form-group">
+            <label for="eb-strength" class="form-label">Strength</label>
+            <input
+              id="eb-strength"
+              type="text"
+              name="strength"
+              class="form-input"
+              placeholder="e.g. 250 mg & 500 mg"
+              [(ngModel)]="strength" />
+          </div>
+
+          <!-- Fill Volume -->
+          <div class="form-group">
+            <label for="eb-fill" class="form-label">Fill Volume</label>
+            <input
+              id="eb-fill"
+              type="text"
+              name="fillVolume"
+              class="form-input"
+              placeholder="e.g. NA or 4 ml"
+              [(ngModel)]="fillVolume" />
+          </div>
+
+          <!-- API Manufacturer -->
+          <div class="form-group">
+            <label for="eb-api" class="form-label">API Manufacturer</label>
+            <input
+              id="eb-api"
+              type="text"
+              name="apiManufacturer"
+              class="form-input"
+              placeholder="e.g. ABC, Cipla API"
+              [(ngModel)]="apiManufacturer" />
+          </div>
+
+          <!-- CEP / DMF No -->
+          <div class="form-group">
+            <label for="eb-cep" class="form-label">CEP / DMF No</label>
+            <input
+              id="eb-cep"
+              type="text"
+              name="cepDmfNo"
+              class="form-input"
+              placeholder="e.g. DMF: 124edrok"
+              [(ngModel)]="cepDmfNo" />
+          </div>
+
+          <!-- Stability Data -->
+          <div class="form-group">
+            <label for="eb-stability" class="form-label">Stability Data</label>
+            <div class="select-wrapper">
+              <select
+                id="eb-stability"
+                name="stabilityData"
+                class="form-input form-select"
+                [(ngModel)]="stabilityData">
+                @for (s of stabilityOptions; track s) {
+                  <option [value]="s">{{ s }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- CTD Status -->
+          <div class="form-group">
+            <label for="eb-ctd" class="form-label">CTD Status</label>
+            <div class="select-wrapper">
+              <select
+                id="eb-ctd"
+                name="ctdStatus"
+                class="form-input form-select"
+                [(ngModel)]="ctdStatus">
+                @for (c of ctdStatusOptions; track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Remarks (Full width) -->
+          <div class="form-group full-width">
+            <label for="eb-remarks" class="form-label">Remarks</label>
+            <textarea
+              id="eb-remarks"
+              name="remarks"
+              class="form-textarea"
+              rows="2"
+              placeholder="Enter remarks, notes, or milestones..."
+              [(ngModel)]="remarks"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="onClose()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-save" id="btn-save-eb-project">
+          {{ projectData ? 'Update Project' : 'Save Project' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

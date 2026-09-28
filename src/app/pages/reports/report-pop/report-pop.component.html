@@ -1,0 +1,90 @@
+<div class="modal-backdrop" (click)="onCancel()">
+  <div class="modal-dialog-card" (click)="$event.stopPropagation()">
+    <!-- Modal Header (Only title and description) -->
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <h3 class="modal-title">Configure New Report</h3>
+        <p class="modal-subtitle">Define parameters, schedule and delivery format for compliance reporting.</p>
+      </div>
+    </div>
+
+    <!-- Modal Form Body -->
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Report ID</label>
+          <input type="text" class="form-input" [(ngModel)]="report.reportId" placeholder="RPT-516" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Report Name *</label>
+          <input type="text" class="form-input" [(ngModel)]="report.reportName" placeholder="e.g. November 2026 Filings" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Report Type</label>
+          <select class="form-select" [(ngModel)]="report.reportType">
+            <option value="Monthly Submissions">Monthly Submissions</option>
+            <option value="Overdue Report">Overdue Report</option>
+            <option value="Molecule Summary">Molecule Summary</option>
+            <option value="Traction Report">Traction Report</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Scope *</label>
+          <input type="text" class="form-input" [(ngModel)]="report.scope" placeholder="e.g. All regions or Atorvastatin" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Period From</label>
+          <input type="text" class="form-input" [(ngModel)]="report.periodFrom" placeholder="01 Oct 2026" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Period To</label>
+          <input type="text" class="form-input" [(ngModel)]="report.periodTo" placeholder="31 Oct 2026" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Frequency</label>
+          <select class="form-select" [(ngModel)]="report.frequency">
+            <option value="Monthly">Monthly</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Quarterly">Quarterly</option>
+            <option value="Annual">Annual</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Format</label>
+          <select class="form-select" [(ngModel)]="report.format">
+            <option value="Excel">Excel</option>
+            <option value="PDF">PDF</option>
+            <option value="CSV">CSV</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Owner</label>
+          <input type="text" class="form-input" [(ngModel)]="report.owner" placeholder="e.g. Regulatory Ops" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" [(ngModel)]="report.status">
+            <option value="Scheduled">Scheduled</option>
+            <option value="Generated">Generated</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer with ONLY Cancel and Save buttons -->
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn-save" (click)="onSave()">Save</button>
+    </div>
+  </div>
+</div>

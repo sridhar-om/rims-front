@@ -61,21 +61,22 @@
 ======================================== */
 
 .app-table-container .app-table > thead {
-  background-color: #3f3f3f;
+  background-color: var(--table-header-bg, #e5f0fc);
 }
 
 
 .app-table-container .app-table > thead > tr > th {
-  padding: 9px 12px;
+  padding: 12px 14px;
 
-  border: 1px solid #6b7280;
+  border: 1px solid var(--table-header-border, #d0e3f8);
 
-  background-color: #3f3f3f;
+  background-color: var(--table-header-bg, #e5f0fc);
 
-  color: #ffffff;
+  color: var(--table-header-color, #12426d);
 
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 
   vertical-align: middle;
 
@@ -431,7 +432,7 @@
 ======================================== */
 
 .app-btn-primary {
-  background-color: #287db3 !important;
+  background-color: var(--primary-color, #12426d) !important;
 
   color: #ffffff !important;
 
@@ -440,7 +441,7 @@
 
 
 .app-btn-primary:hover {
-  background-color: #216b9b !important;
+  background-color: var(--primary-hover, #0e3457) !important;
 }
 
 
@@ -521,7 +522,7 @@
 
   background: transparent;
 
-  color: #287db3;
+  color: var(--primary-color, #12426d);
 
   cursor: pointer;
 }

@@ -1,0 +1,110 @@
+<div class="orders-page-container">
+
+  <!-- Action Bar: Search, Counter & Add Order Button -->
+  <div class="action-bar">
+    <div class="search-filter-group">
+      <div class="search-input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search orders, partners, countries..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearch($event)" />
+        @if (searchTerm()) {
+          <button type="button" class="btn-clear-search" (click)="onSearch('')">
+            <mat-icon class="clear-icon">close</mat-icon>
+          </button>
+        }
+      </div>
+
+      <span class="records-counter-text">
+        {{ filteredOrders().length }} orders &middot; total {{ totalValueFormatted() }} (mixed currency)
+      </span>
+    </div>
+
+    <button type="button" class="btn-add-order" (click)="openAddModal()">
+      <mat-icon class="add-icon">add</mat-icon>
+      <span>Add Order</span>
+    </button>
+  </div>
+
+  <!-- Table Card Container -->
+  <div class="table-card">
+    <div class="table-responsive-wrapper">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th class="th-order-id">Order ID</th>
+            <th>Order Date</th>
+            <th>Molecule</th>
+            <th>Product</th>
+            <th>Strength</th>
+            <th>Fill Volume</th>
+            <th>Country</th>
+            <th>Channel Partner</th>
+            <th>Channel</th>
+            <th class="text-right">Quantity</th>
+            <th class="text-right">Order Value</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of paginatedOrders(); track row.orderId) {
+            <tr>
+              <td class="td-order-id">{{ row.orderId }}</td>
+              <td class="td-date">{{ row.orderDate }}</td>
+              <td class="td-molecule">{{ row.molecule }}</td>
+              <td class="td-product">{{ row.product }}</td>
+              <td class="td-strength">{{ row.strength }}</td>
+              <td class="td-fill-volume">{{ row.fillVolume }}</td>
+              <td class="td-country">{{ row.country }}</td>
+              <td class="td-partner">{{ row.channelPartner }}</td>
+              <td class="td-channel">{{ row.channel }}</td>
+              <td class="td-quantity text-right">{{ formatQuantity(row.quantity) }}</td>
+              <td class="td-value text-right">{{ formatValue(row.currency, row.orderValue) }}</td>
+              <td class="td-source">
+                <span class="badge-source" [ngClass]="row.source.toLowerCase()">
+                  {{ row.source }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="12" class="empty-state-cell">
+                <div class="empty-state-content">
+                  <mat-icon class="empty-icon">search_off</mat-icon>
+                  <p class="empty-title">No orders found</p>
+                  <p class="empty-desc">Try modifying your search criteria to view matching records.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginator Footer -->
+    <div class="table-paginator-wrapper">
+      <mat-paginator
+        [length]="filteredOrders().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        aria-label="Select page of orders">
+      </mat-paginator>
+    </div>
+  </div>
+
+  <!-- Add Order Modal Dialog Component -->
+  @if (isAddModalOpen()) {
+    <app-orders-pop
+      [order]="newOrder"
+      (save)="saveOrder($event)"
+      (cancel)="closeAddModal()">
+    </app-orders-pop>
+  }
+
+</div>

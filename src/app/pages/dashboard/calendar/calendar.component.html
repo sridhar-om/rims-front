@@ -1,0 +1,84 @@
+<div class="calendar-view-container">
+
+  <!-- Top Metrics Row (6 Cards) -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <span class="metric-label">New</span>
+      <span class="metric-value">{{ metrics().new }}</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Verified</span>
+      <span class="metric-value">{{ metrics().verified }}</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Authorized</span>
+      <span class="metric-value">{{ metrics().authorized }}</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Scheduled</span>
+      <span class="metric-value">{{ metrics().scheduled }}</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Completed</span>
+      <span class="metric-value">{{ metrics().completed }}</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-label">Claimed</span>
+      <span class="metric-value">{{ metrics().claimed }}</span>
+    </div>
+  </div>
+
+  <!-- Month Navigation Control -->
+  <div class="month-selector-bar">
+    <button type="button" class="btn-month-nav" (click)="prevMonth()" aria-label="Previous Month">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <span class="month-title">{{ currentMonth() }}</span>
+    <button type="button" class="btn-month-nav" (click)="nextMonth()" aria-label="Next Month">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- 4 Category Calendar Cards Grid -->
+  <div class="calendar-cards-grid">
+    @for (cat of categories; track cat.id) {
+      <div class="calendar-card">
+        <!-- Card Header Banner -->
+        <div class="calendar-card-header" [ngClass]="cat.headerClass">
+          {{ cat.title }}
+        </div>
+
+        <!-- Card Body -->
+        <div class="calendar-card-body">
+          <div class="card-month-title">{{ currentMonth() }}</div>
+
+          <!-- Weekdays Header Row -->
+          <div class="weekdays-row">
+            @for (w of weekdays; track $index) {
+              <div class="weekday-cell">{{ w }}</div>
+            }
+          </div>
+
+          <!-- Days Grid -->
+          <div class="days-grid">
+            @for (cell of cat.cells; track $index) {
+              @if (cell.day) {
+                <div
+                  class="day-cell"
+                  [class.selected]="selectedDay() === cell.day"
+                  [ngClass]="selectedDay() === cell.day ? cat.highlightClass : ''"
+                  (click)="selectDay(cell.day)">
+                  <span class="day-number">{{ cell.day }}</span>
+                  <span class="day-count" [ngClass]="selectedDay() === cell.day ? '' : cat.countColorClass">{{ cell.count }}</span>
+                </div>
+              } @else {
+                <div class="day-cell empty"></div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>

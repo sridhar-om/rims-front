@@ -1,0 +1,22 @@
+<div class="d-flex justify-content-end mb-2">
+  <button
+    type="button"
+    class="mine"
+    mat-fab
+    style="background-color: #e5f0fc; right: 110px;"
+    (click)="scrollLeft()"
+    [matTooltip]="leftTooltip"
+    aria-label="Scroll left">
+    <mat-icon style="color: #12426d">fast_rewind</mat-icon>
+  </button>
+  <button
+    type="button"
+    class="mine"
+    mat-fab
+    style="background-color: #e5f0fc;"
+    (click)="scrollRight()"
+    [matTooltip]="rightTooltip"
+    aria-label="Scroll right">
+    <mat-icon style="color: #12426d">fast_forward</mat-icon>
+  </button>
+</div>

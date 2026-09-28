@@ -1,8 +1,111 @@
+<div class="dashboard-page">
 
+  <!-- Header: Title & Subtitle (Without Breadcrumb) -->
+  <!-- <div class="dashboard-header">
+    <h1 class="dashboard-title">Regulatory information management</h1>
+    <p class="dashboard-subtitle">
+      Track molecules, products and submissions across every country, region and regulatory context.
+    </p>
+  </div> -->
 
+  <!-- Global Filters Panel -->
+  <div class="filter-panel-card">
+    <div class="filter-panel-header">
+      <div class="filter-title-group">
+        <mat-icon class="filter-header-icon">tune</mat-icon>
+        <span class="filter-header-title">Global filters</span>
+      </div>
+      <button type="button" class="btn-reset" (click)="resetFilters()">
+        <mat-icon class="reset-icon">refresh</mat-icon>
+        <span>Reset</span>
+      </button>
+    </div>
 
+    <div class="filter-grid">
+      <!-- Molecule -->
+      <div class="filter-col">
+        <label class="filter-label">MOLECULE</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterMolecule()" (ngModelChange)="filterMolecule.set($event)">
+            <option value="All molecule">All molecule</option>
+            @for (rec of allRecords(); track rec.id) {
+              <option [value]="rec.molecule">{{ rec.molecule }}</option>
+            }
+          </select>
+        </div>
+      </div>
 
-<div fxLayout="row wrap">
+      <!-- Product -->
+      <div class="filter-col">
+        <label class="filter-label">PRODUCT</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterProduct()" (ngModelChange)="filterProduct.set($event)">
+            <option value="All product">All product</option>
+            <option value="Product A">Product A</option>
+            <option value="Product B">Product B</option>
+          </select>
+        </div>
+      </div>
 
+      <!-- Country -->
+      <div class="filter-col">
+        <label class="filter-label">COUNTRY</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterCountry()" (ngModelChange)="filterCountry.set($event)">
+            <option value="All country">All country</option>
+            <option value="United States">United States</option>
+            <option value="Germany">Germany</option>
+            <option value="India">India</option>
+            <option value="Japan">Japan</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Region -->
+      <div class="filter-col">
+        <label class="filter-label">REGION</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterRegion()" (ngModelChange)="filterRegion.set($event)">
+            <option value="All region">All region</option>
+            <option value="North America">North America</option>
+            <option value="Europe">Europe</option>
+            <option value="Asia Pacific">Asia Pacific</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Regulatory Context -->
+      <div class="filter-col">
+        <label class="filter-label">REGULATORY CONTEXT</label>
+        <div class="select-container">
+          <select class="filter-select" [ngModel]="filterRegulatoryContext()" (ngModelChange)="filterRegulatoryContext.set($event)">
+            <option value="All regulatory context">All regulatory context</option>
+            <option value="FDA">FDA</option>
+            <option value="EMA">EMA</option>
+            <option value="PMDA">PMDA</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Nav Tabs / Pills -->
+  <div class="nav-tabs-bar">
+    <div class="tabs-scroll">
+      @for (tab of tabs; track tab.label) {
+        <button
+          type="button"
+          class="nav-tab-btn"
+          [class.active]="activeTab() === tab.label"
+          (click)="setTab(tab.label)">
+          <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
+          <span class="tab-label">{{ tab.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Views Content -->
+  <router-outlet></router-outlet>
 
 </div>

@@ -2,25 +2,26 @@ import { Injectable, signal, WritableSignal } from '@angular/core';
 
 export class Settings {
   constructor(public name: string,
-              public loadingSpinner: WritableSignal<boolean>,
-              public fixedHeader:boolean,
-              public sidenavIsOpened: boolean,
-              public sidenavIsPinned: boolean,
-              public sidenavUserBlock: boolean,
-              public menu: string,
-              public menuType: string,
-              public theme: string,
-              public rtl: boolean,
-              public hasFooter: boolean) { }
+    public loadingSpinner: WritableSignal<boolean>,
+    public fixedHeader: boolean,
+    public sidenavIsOpened: boolean,
+    public sidenavIsPinned: boolean,
+    public sidenavUserBlock: boolean,
+    public menu: string,
+    public menuType: string,
+    public theme: string,
+    public rtl: boolean,
+    public hasFooter: boolean) { }
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
+  public isNavCollapsed = signal(false);
 
   public settings = new Settings(
-    'RPM',       //theme name
+    'RIMS',       //theme name
     signal(true),   //loadingSpinner
     true,           //fixedHeader
     true,           //sidenavIsOpened
@@ -34,4 +35,9 @@ export class SettingsService {
   )
 
   constructor() { }
+
+  public toggleNavCollapse(): void {
+    this.isNavCollapsed.update(v => !v);
+    this.settings.menuType = this.isNavCollapsed() ? 'mini' : 'default';
+  }
 }

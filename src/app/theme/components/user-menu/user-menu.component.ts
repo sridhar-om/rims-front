@@ -19,7 +19,6 @@ import { AuthService } from '@services/auth.service';
     ],
     templateUrl: './user-menu.component.html',
     styleUrls: ['./user-menu.component.scss'],
-    // Note: Changed from invalid 'Eager' to standard 'OnPush' for modern performance
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
@@ -28,6 +27,16 @@ export class UserMenuComponent {
 
     // Inject the authentication service using the modern standard
     protected readonly authService = inject(AuthService);
+
+    protected getUserInitials(): string {
+        const name = this.authService.currentUser()?.name;
+        if (!name || name === 'Admin User' || name === 'Guest User') return 'RI';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return name.slice(0, 2).toUpperCase();
+    }
 
     protected logout(): void {
         this.authService.logout();

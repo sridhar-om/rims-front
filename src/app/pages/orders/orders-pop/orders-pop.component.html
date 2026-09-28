@@ -1,0 +1,100 @@
+<div class="modal-backdrop" (click)="onCancel()">
+  <div class="modal-dialog-card" (click)="$event.stopPropagation()">
+    <!-- Modal Header (Only title and description, no extra X button) -->
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <h3 class="modal-title">Log New Order</h3>
+        <p class="modal-subtitle">Record order details, channel partner and shipment values.</p>
+      </div>
+    </div>
+
+    <!-- Modal Form Body -->
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Order ID</label>
+          <input type="text" class="form-input" [(ngModel)]="order.orderId" placeholder="ORD-3316" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Order Date</label>
+          <input type="text" class="form-input" [(ngModel)]="order.orderDate" placeholder="e.g. 23 Sept 2026" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Molecule *</label>
+          <input type="text" class="form-input" [(ngModel)]="order.molecule" placeholder="e.g. Atorvastatin" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Product *</label>
+          <input type="text" class="form-input" [(ngModel)]="order.product" placeholder="e.g. Atorvex" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Strength</label>
+          <input type="text" class="form-input" [(ngModel)]="order.strength" placeholder="e.g. 20 mg" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fill Volume</label>
+          <input type="text" class="form-input" [(ngModel)]="order.fillVolume" placeholder="e.g. N/A(tablet) or 10 mL vial" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Country *</label>
+          <input type="text" class="form-input" [(ngModel)]="order.country" placeholder="e.g. United States" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Channel Partner *</label>
+          <input type="text" class="form-input" [(ngModel)]="order.channelPartner" placeholder="e.g. MedSource Distribution" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Channel</label>
+          <select class="form-select" [(ngModel)]="order.channel">
+            <option value="Distributor">Distributor</option>
+            <option value="Institutional">Institutional</option>
+            <option value="Direct Tender">Direct Tender</option>
+            <option value="Retail">Retail</option>
+            <option value="Hospital Tender">Hospital Tender</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Quantity</label>
+          <input type="number" class="form-input" [(ngModel)]="order.quantity" placeholder="50000" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Currency</label>
+          <select class="form-select" [(ngModel)]="order.currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Order Value</label>
+          <input type="number" class="form-input" [(ngModel)]="order.orderValue" placeholder="120000" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Source</label>
+          <select class="form-select" [(ngModel)]="order.source">
+            <option value="Logged">Logged</option>
+            <option value="Imported">Imported</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer with ONLY Cancel and Save Order buttons -->
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn-save" (click)="onSave()">Save</button>
+    </div>
+  </div>
+</div>
